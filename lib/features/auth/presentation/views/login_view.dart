@@ -1,5 +1,5 @@
-import 'package:flashfeed/features/auth/presentation/widgets/custom_social_icon.dart';
-import 'package:flashfeed/features/auth/presentation/widgets/custom_textfield.dart';
+import 'package:flashfeed_app/features/auth/presentation/widgets/custom_social_icon.dart';
+import 'package:flashfeed_app/features/auth/presentation/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';

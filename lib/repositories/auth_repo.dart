@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:flashfeed/core/api/endpoints.dart';
+import 'package:flashfeed_app/core/api/endpoints.dart';
 import 'package:get/get.dart';
 
 import '../core/api/api_client.dart';

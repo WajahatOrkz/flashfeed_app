@@ -1,4 +1,4 @@
-import 'package:flashfeed/core/theme/app_colors.dart';
+import 'package:flashfeed_app/core/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomTextField extends StatelessWidget {
