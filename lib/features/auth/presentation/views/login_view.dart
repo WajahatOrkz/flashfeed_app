@@ -1,8 +1,6 @@
-import 'package:flashfeed_app/features/auth/presentation/widgets/custom_social_icon.dart';
 import 'package:flashfeed_app/features/auth/presentation/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
 
@@ -15,7 +13,7 @@ class LoginView extends GetView<AuthController> {
       backgroundColor: AppColors.bgColor,
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0),
+          padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -24,7 +22,6 @@ class LoginView extends GetView<AuthController> {
               // Logo section
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                mainAxisSize: MainAxisSize.min,
                 children: [
                   const Icon(
                     Icons.bolt,
@@ -39,137 +36,134 @@ class LoginView extends GetView<AuthController> {
                   ),
                 ],
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 40),
 
-              // Welcome Texts
+              // Heading
               const Text(
-                'Welcome to FlashFeed.',
-                textAlign: TextAlign.center,
+                'Enter your email and password to get you on board',
                 style: TextStyle(
                   color: AppColors.textColor,
-                  fontSize: 20,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                'Hold your precount',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.textColor.withOpacity(0.8),
-                  fontSize: 16,
+                  fontSize: 24,
+                  fontWeight: FontWeight.w600,
+                  height: 1.3,
                 ),
               ),
               const SizedBox(height: 40),
 
-              // Email TextField
+              // Email label + field
+              const Text(
+                'Email',
+                style: TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 8),
               CustomTextField(
                 controller: controller.loginEmailController,
-                hintText: 'Email',
+                hintText: 'Enter your email',
                 fieldBgColor: AppColors.fieldBgColor,
                 borderColor: AppColors.borderColor,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
 
-              // Password TextField
-              CustomTextField(
-                controller: controller.loginPasswordController,
-                hintText: 'Password',
-                obscureText: true,
-                fieldBgColor: AppColors.fieldBgColor,
-                borderColor: AppColors.borderColor,
+              // Password label + field with eye toggle
+              const Text(
+                'Password',
+                style: TextStyle(
+                  color: AppColors.textColor,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-              const SizedBox(height: 32),
+              const SizedBox(height: 8),
+              Obx(
+                () => Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.fieldBgColor,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: AppColors.borderColor,
+                      width: 1.5,
+                    ),
+                  ),
+                  child: TextField(
+                    controller: controller.loginPasswordController,
+                    obscureText: !controller.loginPasswordVisible.value,
+                    style: const TextStyle(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Type your password',
+                      hintStyle: TextStyle(
+                        color: AppColors.textColor.withOpacity(0.4),
+                        fontSize: 16,
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          controller.loginPasswordVisible.value
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.iconGrey,
+                        ),
+                        onPressed: () {
+                          controller.loginPasswordVisible.value =
+                              !controller.loginPasswordVisible.value;
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
 
-              // Login Button
+              // Forgot Password
+              Align(
+                alignment: Alignment.centerRight,
+                child: GestureDetector(
+                  onTap: () {},
+                  child: const Text(
+                    'Forgot Password',
+                    style: TextStyle(
+                      color: AppColors.accentBlue,
+                      fontSize: 14,
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.accentBlue,
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 36),
+
+              // Sign In Button
               SizedBox(
-                height: 52,
+                height: 54,
                 child: ElevatedButton(
                   onPressed: controller.login,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.buttonBgColor,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(10),
                     ),
                     elevation: 0,
                   ),
                   child: const Text(
-                    'Login',
+                    'Sign In',
                     style: TextStyle(
                       color: AppColors.textColor,
-                      fontSize: 18,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
+                      letterSpacing: 1.2,
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 32),
-
-              // Signup Text
-              GestureDetector(
-                onTap: controller.navigateToSignup,
-                child: const Text(
-                  'Signup',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: AppColors.accentBlue,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 48),
-
-              // Social Login Divider
-              Row(
-                children: [
-                  const Expanded(
-                    child: Divider(
-                      color: AppColors.dividerColor,
-                      thickness: 1,
-                      endIndent: 16,
-                    ),
-                  ),
-                  Text(
-                    'Social Login',
-                    style: TextStyle(
-                      color: AppColors.textColor.withOpacity(0.8),
-                      fontSize: 14,
-                    ),
-                  ),
-                  const Expanded(
-                    child: Divider(
-                      color: AppColors.dividerColor,
-                      thickness: 1,
-                      indent: 16,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 32),
-
-              // Social Icons
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  SocialIcon(
-                    icon: FontAwesomeIcons.facebook,
-                    onTap: () => controller.socialLogin('Facebook'),
-                    bgColor: AppColors.fieldBgColor,
-                  ),
-                  const SizedBox(width: 24),
-                  SocialIcon(
-                    icon: FontAwesomeIcons.twitter,
-                    onTap: () => controller.socialLogin('Twitter'),
-                    bgColor: AppColors.fieldBgColor,
-                  ),
-                  const SizedBox(width: 24),
-                  SocialIcon(
-                    icon: FontAwesomeIcons.instagram,
-                    onTap: () => controller.socialLogin('Instagram'),
-                    bgColor: AppColors.fieldBgColor,
-                  ),
-                ],
               ),
               const SizedBox(height: 48),
             ],
@@ -178,8 +172,4 @@ class LoginView extends GetView<AuthController> {
       ),
     );
   }
-
- 
-
-  
 }

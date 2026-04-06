@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../features/auth/presentation/bindings/auth_binding.dart';
+import '../../features/auth/presentation/views/initial_auth_view.dart';
 import '../../features/auth/presentation/views/login_view.dart';
 import '../../features/auth/presentation/views/signup_view.dart';
 import '../../features/splash/presentation/bindings/splash_binding.dart';
@@ -12,6 +13,12 @@ class AppPages {
       name: AppRoutes.splash,
       page: () => const SplashView(),
       binding: SplashBinding(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: AppRoutes.initialAuth,
+      page: () => const InitialAuthView(),
+      binding: AuthBinding(),
       transition: Transition.noTransition,
     ),
     GetPage(

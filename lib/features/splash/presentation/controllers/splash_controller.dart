@@ -19,7 +19,7 @@ class SplashController extends GetxController {
     if (isLoggedIn) {
       // Get.offAllNamed(AppRoutes.feed); // Navigate to Feed if logged in
     } else {
-      Get.offAllNamed(AppRoutes.login); // Navigate to Login if not logged in
+      Get.offAllNamed(AppRoutes.initialAuth); // Navigate to InitialAuth if not logged in
     }
   }
 }
