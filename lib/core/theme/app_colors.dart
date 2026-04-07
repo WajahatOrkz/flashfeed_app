@@ -14,4 +14,6 @@ class AppColors {
   static const Color iconDark = Color(0xFF1E1E1E);
   static const Color iconGrey = Color(0xFF9E9E9E);
   static const Color dividerColor = Colors.white24;
+  static const Color errorRed = Color(0xFFE53935);
+  static const Color successGreen = Color(0xFF43A047);
 }

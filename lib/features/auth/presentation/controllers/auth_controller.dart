@@ -1,7 +1,7 @@
-import 'package:flashfeed_app/core/constants/app_config.dart';
 import 'package:flashfeed_app/core/routes/routes.dart';
 import 'package:flashfeed_app/core/services/shared_preferences_services.dart';
 import 'package:flashfeed_app/core/theme/app_colors.dart';
+import 'package:flashfeed_app/features/auth/presentation/widgets/otp_bottom_sheet.dart';
 import 'package:flashfeed_app/repositories/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -30,6 +30,14 @@ class AuthController extends GetxController {
   final loginPasswordVisible = false.obs;
   final signupPasswordVisible = false.obs;
 
+  // OTP Controllers (6 boxes)
+  final List<TextEditingController> otpControllers = List.generate(
+    6,
+    (_) => TextEditingController(),
+  );
+  final List<FocusNode> otpFocusNodes = List.generate(6, (_) => FocusNode());
+  final RxBool isOtpLoading = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -57,6 +65,8 @@ class AuthController extends GetxController {
     signupNameController.dispose();
     signupEmailController.dispose();
     signupPasswordController.dispose();
+    for (final c in otpControllers) c.dispose();
+    for (final f in otpFocusNodes) f.dispose();
     super.onClose();
   }
 
@@ -144,26 +154,72 @@ class AuthController extends GetxController {
     }
   }
 
-  void navigateToSignup() {
-    // Get.toNamed(AppRoutes.signup);
-  }
-
-  void socialLogin(String provider) {
-    print('Social login with $provider');
-  }
-
   // --- Signup Methods ---
-  void signup() {
-    print(
-      'Signup with Name: ${signupNameController.text}, Email: ${signupEmailController.text}',
-    );
+  Future<void> signup() async {
+    try {
+      isLoading.value = true;
+      // Step 1: Register user
+      final response = await authRepo.register(
+        signupNameController.text.trim(),
+        loginEmailController.text.trim(),
+        signupPasswordController.text.trim(),
+      );
+      // Step 2: Send OTP using the token from registration
+      _signupToken = response.authToken!;
+      await authRepo.sendOtpToEmail(_signupToken);
+      isLoading.value = false;
+      // Step 3: Open OTP bottom sheet
+      for (final c in otpControllers) c.clear();
+      Get.bottomSheet(
+        const OtpBottomSheet(),
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+      );
+    } catch (e) {
+      isLoading.value = false;
+      Get.snackbar(
+        'Signup Failed',
+        e.toString().replaceAll('Exception: ', ''),
+        backgroundColor: const Color(0xFFE53935),
+        colorText: const Color(0xFFFFFFFF),
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        duration: const Duration(seconds: 4),
+      );
+    }
   }
 
-  void navigateToLogin() {
-    Get.back();
-  }
-
-  void socialSignup(String provider) {
-    print('Social signup with $provider');
+  Future<void> verifyOtp() async {
+    final otp = otpControllers.map((c) => c.text).join();
+    final email = loginEmailController.text.trim();
+    try {
+      isOtpLoading.value = true;
+      await authRepo.verifyOtp(email, otp);
+      isOtpLoading.value = false;
+      Get.back(); // close bottom sheet
+      Get.snackbar(
+        'Email Verified',
+        'Your email has been verified successfully.',
+        backgroundColor: AppColors.primaryColor,
+        colorText: const Color(0xFFFFFFFF),
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        duration: const Duration(seconds: 3),
+      );
+    } catch (e) {
+      isOtpLoading.value = false;
+      Get.snackbar(
+        'Invalid OTP',
+        e.toString().replaceAll('Exception: ', ''),
+        backgroundColor: const Color(0xFFE53935),
+        colorText: const Color(0xFFFFFFFF),
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        duration: const Duration(seconds: 4),
+      );
+    }
   }
 }
