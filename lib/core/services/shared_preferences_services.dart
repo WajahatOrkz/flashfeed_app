@@ -104,4 +104,29 @@ class SharedPreferencesService {
 
   /// Set login status
   Future<bool> setLoggedIn(bool value) => setBool('is_logged_in', value);
+
+  // ==================== User Session ====================
+
+  /// Save full user session after login
+  Future<void> saveUserSession({
+    required String token,
+    required String email,
+    required String name,
+  }) async {
+    await setString('auth_token', token);
+    await setString('user_email', email);
+    await setString('user_name', name);
+    await setBool('is_logged_in', true);
+  }
+
+  /// Clear user session on logout
+  Future<void> clearUserSession() async {
+    await remove('auth_token');
+    await remove('user_email');
+    await remove('user_name');
+    await setBool('is_logged_in', false);
+  }
+
+  String? get userEmail => getString('user_email');
+  String? get userName => getString('user_name');
 }

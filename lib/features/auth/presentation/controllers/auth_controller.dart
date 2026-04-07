@@ -109,11 +109,11 @@ class AuthController extends GetxController {
       );
 
       if (response.authToken != null) {
-        final prefs = SharedPreferencesService.instance;
-        await prefs.setString(AppConfig.tokenKey, response.authToken!);
-        await prefs.setString(AppConfig.userEmailKey, response.email ?? '');
-        await prefs.setString(AppConfig.userNameKey, response.name ?? '');
-        await prefs.setBool(AppConfig.isLoggedInKey, true);
+        await SharedPreferencesService.instance.saveUserSession(
+          token: response.authToken!,
+          email: response.email ?? '',
+          name: response.name ?? '',
+        );
         isUserLogin.value = true;
         Get.toNamed(AppRoutes.feed);
       }
