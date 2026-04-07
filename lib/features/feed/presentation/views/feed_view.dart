@@ -11,8 +11,18 @@ class FeedView extends GetView<FeedController> {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        title: const Text('FlashFeed', style: TextStyle(color: AppColors.textColor)),
-        backgroundColor: AppColors.fieldBgColor,
+        automaticallyImplyLeading: true,
+        // leading: GestureDetector(
+        //   onTap: () {
+        //     Get.back();
+        //   },
+        //   child: const Icon(Icons.arrow_back, color: AppColors.textColor),
+        // ),
+        title: const Text(
+          'FlashFeed',
+          style: TextStyle(color: AppColors.textColor),
+        ),
+        backgroundColor: AppColors.primaryColor,
         elevation: 0,
         centerTitle: true,
       ),

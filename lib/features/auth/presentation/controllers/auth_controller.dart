@@ -1,5 +1,9 @@
+import 'package:flashfeed_app/core/constants/app_config.dart';
+import 'package:flashfeed_app/core/routes/routes.dart';
+import 'package:flashfeed_app/core/services/shared_preferences_services.dart';
+import 'package:flashfeed_app/core/theme/app_colors.dart';
 import 'package:flashfeed_app/repositories/auth_repo.dart';
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class AuthController extends GetxController {
@@ -20,6 +24,7 @@ class AuthController extends GetxController {
   final isUserExists = RxnBool();
   final continueButtonEnabled = true.obs;
   final termsEnabled = false.obs;
+  final isUserLogin = false.obs;
 
   // Password visibility toggles
   final loginPasswordVisible = false.obs;
@@ -55,19 +60,33 @@ class AuthController extends GetxController {
     super.onClose();
   }
 
-  Future checkUserExists(String email) async {
-    isLoading.value = true;
+  Future<void> checkUserExists(String email) async {
+    try {
+      isLoading.value = true;
 
-    // Clear extra fields before showing new state, keep email
-    loginPasswordController.clear();
-    signupNameController.clear();
-    signupPasswordController.clear();
-    loginPasswordVisible.value = false;
-    signupPasswordVisible.value = false;
+      // Clear extra fields before showing new state, keep email
+      loginPasswordController.clear();
+      signupNameController.clear();
+      signupPasswordController.clear();
+      loginPasswordVisible.value = false;
+      signupPasswordVisible.value = false;
 
-    isUserExists.value = await authRepo.isUserExists(email);
-
-    isLoading.value = false;
+      isUserExists.value = await authRepo.isUserExists(email);
+    } catch (e) {
+      debugPrint('[checkUserExists] Error: $e');
+      Get.snackbar(
+        'Error',
+        'Something went wrong. Please try again.',
+        backgroundColor: const Color(0xFFE53935),
+        colorText: const Color(0xFFFFFFFF),
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void resetAuthState() {
@@ -80,8 +99,49 @@ class AuthController extends GetxController {
   }
 
   // --- Login Methods ---
-  void login() {
-    print('Login with Email: ${loginEmailController.text}');
+  Future<void> userLogin() async {
+    print("Sign In button is pressing");
+    try {
+      isLoading.value = true;
+      final response = await authRepo.login(
+        loginEmailController.text.trim(),
+        loginPasswordController.text.trim(),
+      );
+
+      if (response.authToken != null) {
+        final prefs = SharedPreferencesService.instance;
+        await prefs.setString(AppConfig.tokenKey, response.authToken!);
+        await prefs.setString(AppConfig.userEmailKey, response.email ?? '');
+        await prefs.setString(AppConfig.userNameKey, response.name ?? '');
+        await prefs.setBool(AppConfig.isLoggedInKey, true);
+        isUserLogin.value = true;
+        Get.toNamed(AppRoutes.feed);
+      }
+
+      Get.snackbar(
+        'Login Successful',
+        'Welcome back, ${response.name ?? 'User'}!',
+        backgroundColor: AppColors.primaryColor,
+        colorText: const Color(0xFFFFFFFF),
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        duration: const Duration(seconds: 4),
+      );
+    } catch (e) {
+      Get.snackbar(
+        'Login Failed',
+        e.toString().replaceAll('Exception: ', ''),
+        backgroundColor: const Color(0xFFE53935),
+        colorText: const Color(0xFFFFFFFF),
+        snackPosition: SnackPosition.BOTTOM,
+        margin: const EdgeInsets.all(16),
+        borderRadius: 10,
+        duration: const Duration(seconds: 4),
+      );
+    } finally {
+      isLoading.value = false;
+    }
   }
 
   void navigateToSignup() {

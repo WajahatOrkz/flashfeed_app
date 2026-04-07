@@ -24,4 +24,16 @@ class ResponseModel {
         'statusDescription': statusDescription,
         'data': data,
       };
+
+  /// Extracts a human-readable error message from the response data.
+  String extractError([String fallback = 'Something went wrong']) {
+    if (data is Map) {
+      if (data['message'] != null) return data['message'].toString();
+      if (data['error'] is List && (data['error'] as List).isNotEmpty) {
+        return (data['error'] as List).join(', ');
+      }
+      if (data['error'] != null) return data['error'].toString();
+    }
+    return fallback;
+  }
 }

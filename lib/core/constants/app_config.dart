@@ -14,6 +14,7 @@ class AppConfig {
   static const String tokenKey = 'auth_token';
   static const String userIdKey = 'user_id';
   static const String userEmailKey = 'user_email';
+  static const String userNameKey = 'user_name';
   static const String isLoggedInKey = 'is_logged_in';
 
   /// API Endpoints

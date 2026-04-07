@@ -3,6 +3,8 @@ import '../../features/auth/presentation/bindings/auth_binding.dart';
 import '../../features/auth/presentation/views/initial_auth_view.dart';
 import '../../features/auth/presentation/views/login_view.dart';
 import '../../features/auth/presentation/views/signup_view.dart';
+import '../../features/feed/presentation/bindings/feed_binding.dart';
+import '../../features/feed/presentation/views/feed_view.dart';
 import '../../features/splash/presentation/bindings/splash_binding.dart';
 import '../../features/splash/presentation/views/splash_view.dart';
 import 'routes.dart';
@@ -31,6 +33,12 @@ class AppPages {
       name: AppRoutes.signUp,
       page: () => const SignupView(),
       binding: AuthBinding(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: AppRoutes.feed,
+      page: () => const FeedView(),
+      binding: FeedBinding(),
       transition: Transition.noTransition,
     ),
   ];
