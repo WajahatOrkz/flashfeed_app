@@ -107,15 +107,17 @@ class SharedPreferencesService {
 
   // ==================== User Session ====================
 
-  /// Save full user session after login
+  /// Save full user session after login/register
   Future<void> saveUserSession({
     required String token,
     required String email,
     required String name,
+    String? deviceId,
   }) async {
     await setString('auth_token', token);
     await setString('user_email', email);
     await setString('user_name', name);
+    if (deviceId != null) await setString('device_id', deviceId);
     await setBool('is_logged_in', true);
   }
 
@@ -124,9 +126,11 @@ class SharedPreferencesService {
     await remove('auth_token');
     await remove('user_email');
     await remove('user_name');
+    await remove('device_id');
     await setBool('is_logged_in', false);
   }
 
   String? get userEmail => getString('user_email');
   String? get userName => getString('user_name');
+  String? get deviceId => getString('device_id');
 }

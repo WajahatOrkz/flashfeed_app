@@ -48,7 +48,7 @@ class ApiClient extends GetConnect {
       final token = kUserToken.isEmpty ? null : kUserToken;
       Map<String, String> headers = {
         'Content-Type': 'application/json',
-        'token': token ?? "",
+        if (token != null) 'token': token,
       };
 
       _logsService.logRequest(url, 'GET', headers, null);
@@ -113,7 +113,7 @@ class ApiClient extends GetConnect {
       final token = kUserToken.isEmpty ? null : kUserToken;
       Map<String, String> headers = {
         'Content-Type': 'application/json',
-        'token': token ?? "",
+        if (token != null) 'token': token,
       };
 
       if (extraHeaders != null) headers.addAll(extraHeaders);
@@ -160,7 +160,7 @@ class ApiClient extends GetConnect {
       final token = kUserToken.isEmpty ? null : kUserToken;
       Map<String, String> headers = {
         'Content-Type': 'application/json',
-        'token': token ?? '',
+        if (token != null) 'token': token,
       };
       if (extraHeaders != null) headers.addAll(extraHeaders);
 
@@ -191,7 +191,7 @@ class ApiClient extends GetConnect {
     final startTime = DateTime.now();
     try {
       final token = kUserToken.isEmpty ? null : kUserToken;
-      Map<String, String> headers = {'token': token ?? ""};
+      Map<String, String> headers = {if (token != null) 'token': token};
 
       _logsService.logRequest(url, 'DELETE', headers, null);
 
@@ -242,7 +242,7 @@ class ApiClient extends GetConnect {
 
     try {
       final token = kUserToken.isEmpty ? null : kUserToken;
-      var headers = {'token': token ?? ''};
+      var headers = <String, String>{if (token != null) 'token': token};
 
       d.Dio dio = d.Dio();
       dio.options.headers.addAll(headers);

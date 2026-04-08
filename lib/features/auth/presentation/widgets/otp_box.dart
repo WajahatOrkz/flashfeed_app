@@ -47,7 +47,7 @@ class OtpBox extends GetView<AuthController> {
         ),
         onChanged: (val) {
           if (val.isNotEmpty) {
-            if (index < 5) {
+            if (index < 3) {
               controller.otpFocusNodes[index + 1].requestFocus();
             } else {
               controller.otpFocusNodes[index].unfocus();

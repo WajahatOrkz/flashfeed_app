@@ -1,7 +1,11 @@
 import 'package:flashfeed_app/core/routes/routes.dart';
 import 'package:flashfeed_app/core/services/shared_preferences_services.dart';
 import 'package:flashfeed_app/core/theme/app_colors.dart';
+import 'package:flashfeed_app/core/utils/app_snackbar.dart';
+import 'package:flashfeed_app/core/validation/validations.dart';
 import 'package:flashfeed_app/features/auth/presentation/widgets/otp_bottom_sheet.dart';
+import 'package:flashfeed_app/model/login_model.dart';
+import 'package:flashfeed_app/model/verify_otp_model.dart';
 import 'package:flashfeed_app/repositories/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -32,10 +36,10 @@ class AuthController extends GetxController {
 
   // OTP Controllers (6 boxes)
   final List<TextEditingController> otpControllers = List.generate(
-    6,
+    4,
     (_) => TextEditingController(),
   );
-  final List<FocusNode> otpFocusNodes = List.generate(6, (_) => FocusNode());
+  final List<FocusNode> otpFocusNodes = List.generate(4, (_) => FocusNode());
   final RxBool isOtpLoading = false.obs;
 
   @override
@@ -71,6 +75,12 @@ class AuthController extends GetxController {
   }
 
   Future<void> checkUserExists(String email) async {
+    final emailError = Validators.validateEmail(email);
+    if (emailError != null) {
+      AppSnackbar.error('Invalid Email', emailError);
+      return;
+    }
+
     try {
       isLoading.value = true;
 
@@ -84,16 +94,7 @@ class AuthController extends GetxController {
       isUserExists.value = await authRepo.isUserExists(email);
     } catch (e) {
       debugPrint('[checkUserExists] Error: $e');
-      Get.snackbar(
-        'Error',
-        'Something went wrong. Please try again.',
-        backgroundColor: const Color(0xFFE53935),
-        colorText: const Color(0xFFFFFFFF),
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 10,
-        duration: const Duration(seconds: 3),
-      );
+      AppSnackbar.error('Error', 'Something went wrong. Please try again.');
     } finally {
       isLoading.value = false;
     }
@@ -110,7 +111,21 @@ class AuthController extends GetxController {
 
   // --- Login Methods ---
   Future<void> userLogin() async {
-    print("Sign In button is pressing");
+    final emailError = Validators.validateEmail(
+      loginEmailController.text.trim(),
+    );
+    if (emailError != null) {
+      AppSnackbar.error('Invalid Email', emailError);
+      return;
+    }
+    final passwordError = Validators.validateLoginPassword(
+      loginPasswordController.text.trim(),
+    );
+    if (passwordError != null) {
+      AppSnackbar.error('Invalid Password', passwordError);
+      return;
+    }
+
     try {
       isLoading.value = true;
       final response = await authRepo.login(
@@ -128,26 +143,14 @@ class AuthController extends GetxController {
         Get.toNamed(AppRoutes.feed);
       }
 
-      Get.snackbar(
+      AppSnackbar.success(
         'Login Successful',
         'Welcome back, ${response.name ?? 'User'}!',
-        backgroundColor: AppColors.primaryColor,
-        colorText: const Color(0xFFFFFFFF),
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 10,
-        duration: const Duration(seconds: 4),
       );
     } catch (e) {
-      Get.snackbar(
+      AppSnackbar.error(
         'Login Failed',
         e.toString().replaceAll('Exception: ', ''),
-        backgroundColor: const Color(0xFFE53935),
-        colorText: const Color(0xFFFFFFFF),
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 10,
-        duration: const Duration(seconds: 4),
       );
     } finally {
       isLoading.value = false;
@@ -155,20 +158,41 @@ class AuthController extends GetxController {
   }
 
   // --- Signup Methods ---
-  Future<void> signup() async {
+  Future<void> sendMobileOtp() async {
+    final nameVal = signupNameController.text.trim();
+    if (nameVal.isEmpty) {
+      AppSnackbar.error('Invalid Name', 'Name is required');
+      return;
+    }
+    final emailError = Validators.validateEmail(
+      loginEmailController.text.trim(),
+    );
+    if (emailError != null) {
+      AppSnackbar.error('Invalid Email', emailError);
+      return;
+    }
+    final passwordError = Validators.validateSignupPassword(
+      signupPasswordController.text.trim(),
+    );
+    if (passwordError != null) {
+      AppSnackbar.error('Invalid Password', passwordError);
+      return;
+    }
+    if (!termsEnabled.value) {
+      AppSnackbar.error(
+        'Terms Required',
+        'Please accept the terms and conditions',
+      );
+      return;
+    }
+
     try {
       isLoading.value = true;
-      // Step 1: Register user
-      final response = await authRepo.register(
-        signupNameController.text.trim(),
-        loginEmailController.text.trim(),
-        signupPasswordController.text.trim(),
-      );
-      // Step 2: Send OTP using the token from registration
-      _signupToken = response.authToken!;
-      await authRepo.sendOtpToEmail(_signupToken);
+
+      await authRepo.sendMobileOtp(loginEmailController.text.trim());
+
       isLoading.value = false;
-      // Step 3: Open OTP bottom sheet
+
       for (final c in otpControllers) c.clear();
       Get.bottomSheet(
         const OtpBottomSheet(),
@@ -177,48 +201,55 @@ class AuthController extends GetxController {
       );
     } catch (e) {
       isLoading.value = false;
-      Get.snackbar(
-        'Signup Failed',
+      AppSnackbar.error(
+        'Failed to Send OTP',
         e.toString().replaceAll('Exception: ', ''),
-        backgroundColor: const Color(0xFFE53935),
-        colorText: const Color(0xFFFFFFFF),
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 10,
-        duration: const Duration(seconds: 4),
       );
     }
   }
 
   Future<void> verifyOtp() async {
     final otp = otpControllers.map((c) => c.text).join();
-    final email = loginEmailController.text.trim();
+    if (otp.length < 4) {
+      AppSnackbar.error(
+        'Invalid OTP',
+        'Please enter the complete 4-digit OTP.',
+      );
+      return;
+    }
+
     try {
       isOtpLoading.value = true;
-      await authRepo.verifyOtp(email, otp);
+
+      await authRepo.verifyMobileOtp(loginEmailController.text.trim(), otp);
+
+      const deviceId = 'dev-test-device-001';
+      // register api function yahan call ho raha hai
+      final user = await authRepo.register(
+        email: loginEmailController.text.trim(),
+        password: signupPasswordController.text.trim(),
+        name: signupNameController.text.trim(),
+        deviceId: deviceId,
+      );
+
+      if (user.authToken != null) {
+        await SharedPreferencesService.instance.saveUserSession(
+          token: user.authToken!,
+          email: user.email ?? loginEmailController.text.trim(),
+          name: user.name ?? signupNameController.text.trim(),
+          deviceId: deviceId,
+        );
+        isUserLogin.value = true;
+      }
+
       isOtpLoading.value = false;
       Get.back(); // close bottom sheet
-      Get.snackbar(
-        'Email Verified',
-        'Your email has been verified successfully.',
-        backgroundColor: AppColors.primaryColor,
-        colorText: const Color(0xFFFFFFFF),
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 10,
-        duration: const Duration(seconds: 3),
-      );
+      Get.toNamed(AppRoutes.feed);
     } catch (e) {
       isOtpLoading.value = false;
-      Get.snackbar(
-        'Invalid OTP',
+      AppSnackbar.error(
+        'Registration Failed',
         e.toString().replaceAll('Exception: ', ''),
-        backgroundColor: const Color(0xFFE53935),
-        colorText: const Color(0xFFFFFFFF),
-        snackPosition: SnackPosition.BOTTOM,
-        margin: const EdgeInsets.all(16),
-        borderRadius: 10,
-        duration: const Duration(seconds: 4),
       );
     }
   }

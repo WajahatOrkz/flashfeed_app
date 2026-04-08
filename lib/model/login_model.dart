@@ -7,14 +7,15 @@ class LoginModel {
   List<String>? blockedUsers;
   String? sId;
 
-  LoginModel(
-      {this.authToken,
-      this.name,
-      this.email,
-      this.verified,
-      this.requireProfileUpdate,
-      this.blockedUsers,
-      this.sId});
+  LoginModel({
+    this.authToken,
+    this.name,
+    this.email,
+    this.verified,
+    this.requireProfileUpdate,
+    this.blockedUsers,
+    this.sId,
+  });
 
   LoginModel.fromJson(Map<String, dynamic> json) {
     authToken = json['authToken'];
@@ -22,7 +23,7 @@ class LoginModel {
     email = json['email'];
     verified = json['verified'];
     requireProfileUpdate = json['requireProfileUpdate'];
-    blockedUsers = json['BlockedUsers'].cast<String>();
+    blockedUsers = (json['BlockedUsers'] as List?)?.cast<String>();
     sId = json['_id'];
   }
 

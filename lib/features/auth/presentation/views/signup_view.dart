@@ -96,120 +96,127 @@ class SignupView extends GetView<AuthController> {
                 ),
               ),
               const SizedBox(height: 8),
-              Obx(() => Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.fieldBgColor,
-                      borderRadius: BorderRadius.circular(10),
-                      border: Border.all(
-                          color: AppColors.borderColor, width: 1.5),
+              Obx(
+                () => Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.fieldBgColor,
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(
+                      color: AppColors.borderColor,
+                      width: 1.5,
                     ),
-                    child: TextField(
-                      controller: controller.signupPasswordController,
-                      obscureText: !controller.signupPasswordVisible.value,
-                      style: const TextStyle(
-                        color: AppColors.textColor,
+                  ),
+                  child: TextField(
+                    controller: controller.signupPasswordController,
+                    obscureText: !controller.signupPasswordVisible.value,
+                    style: const TextStyle(
+                      color: AppColors.textColor,
+                      fontSize: 16,
+                    ),
+                    decoration: InputDecoration(
+                      hintText: 'Type your password',
+                      hintStyle: TextStyle(
+                        color: AppColors.textColor.withOpacity(0.4),
                         fontSize: 16,
                       ),
-                      decoration: InputDecoration(
-                        hintText: 'Type your password',
-                        hintStyle: TextStyle(
-                          color: AppColors.textColor.withOpacity(0.4),
-                          fontSize: 16,
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 16,
+                      ),
+                      suffixIcon: IconButton(
+                        icon: Icon(
+                          controller.signupPasswordVisible.value
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.iconGrey,
                         ),
-                        border: InputBorder.none,
-                        contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 16,
-                        ),
-                        suffixIcon: IconButton(
-                          icon: Icon(
-                            controller.signupPasswordVisible.value
-                                ? Icons.visibility_outlined
-                                : Icons.visibility_off_outlined,
-                            color: AppColors.iconGrey,
-                          ),
-                          onPressed: () {
-                            controller.signupPasswordVisible.value =
-                                !controller.signupPasswordVisible.value;
-                          },
-                        ),
+                        onPressed: () {
+                          controller.signupPasswordVisible.value =
+                              !controller.signupPasswordVisible.value;
+                        },
                       ),
                     ),
-                  )),
+                  ),
+                ),
+              ),
               const SizedBox(height: 32),
 
               // Terms & Privacy Policy checkbox
-              Obx(() => Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          controller.termsEnabled.value =
-                              !controller.termsEnabled.value;
-                        },
-                        child: Container(
-                          width: 24,
-                          height: 24,
-                          decoration: BoxDecoration(
-                            color: controller.termsEnabled.value
-                                ? AppColors.accentBlue
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: AppColors.accentBlue,
-                              width: 1.5,
-                            ),
-                            borderRadius: BorderRadius.circular(4),
+              Obx(
+                () => Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        controller.termsEnabled.value =
+                            !controller.termsEnabled.value;
+                      },
+                      child: Container(
+                        width: 24,
+                        height: 24,
+                        decoration: BoxDecoration(
+                          color: controller.termsEnabled.value
+                              ? AppColors.accentBlue
+                              : Colors.transparent,
+                          border: Border.all(
+                            color: AppColors.accentBlue,
+                            width: 1.5,
                           ),
-                          child: controller.termsEnabled.value
-                              ? const Icon(
-                                  Icons.check,
-                                  color: AppColors.bgColor,
-                                  size: 16,
-                                )
-                              : null,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: controller.termsEnabled.value
+                            ? const Icon(
+                                Icons.check,
+                                color: AppColors.bgColor,
+                                size: 16,
+                              )
+                            : null,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: RichText(
+                        text: TextSpan(
+                          style: TextStyle(
+                            color: AppColors.textColor.withOpacity(0.8),
+                            fontSize: 14,
+                            height: 1.4,
+                          ),
+                          children: const [
+                            TextSpan(
+                              text:
+                                  'By using our services you are agreeing to our\n',
+                            ),
+                            TextSpan(
+                              text: 'Terms',
+                              style: TextStyle(
+                                color: AppColors.accentBlue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            TextSpan(text: ' and '),
+                            TextSpan(
+                              text: 'Privacy Policy',
+                              style: TextStyle(
+                                color: AppColors.accentBlue,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: RichText(
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: AppColors.textColor.withOpacity(0.8),
-                              fontSize: 14,
-                              height: 1.4,
-                            ),
-                            children: const [
-                              TextSpan(
-                                  text:
-                                      'By using our services you are agreeing to our\n'),
-                              TextSpan(
-                                text: 'Terms',
-                                style: TextStyle(
-                                  color: AppColors.accentBlue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              TextSpan(text: ' and '),
-                              TextSpan(
-                                text: 'Privacy Policy',
-                                style: TextStyle(
-                                  color: AppColors.accentBlue,
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ],
-                  )),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 32),
 
               // Sign Up Button
               SizedBox(
                 height: 54,
                 child: ElevatedButton(
-                  onPressed: controller.signup,
+                  onPressed: () => controller.sendMobileOtp(),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.buttonBgColor,
                     shape: RoundedRectangleBorder(

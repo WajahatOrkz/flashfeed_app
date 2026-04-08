@@ -3,50 +3,12 @@ import 'package:get/get.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
 import '../widgets/custom_textfield.dart';
+import '../widgets/loading_overlay.dart';
+import '../widgets/login_form_fields.dart';
+import '../widgets/signup_form_fields.dart';
 
 class InitialAuthView extends GetView<AuthController> {
   const InitialAuthView({super.key});
-
-  Widget _passwordField({
-    required TextEditingController textController,
-    required RxBool visible,
-  }) {
-    return Obx(
-      () => Container(
-        decoration: BoxDecoration(
-          color: AppColors.fieldBgColor,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.borderColor, width: 1.5),
-        ),
-        child: TextField(
-          controller: textController,
-          obscureText: !visible.value,
-          style: const TextStyle(color: AppColors.textColor, fontSize: 16),
-          decoration: InputDecoration(
-            hintText: 'Type your password',
-            hintStyle: TextStyle(
-              color: AppColors.textColor.withOpacity(0.4),
-              fontSize: 16,
-            ),
-            border: InputBorder.none,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                visible.value
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
-                color: AppColors.iconGrey,
-              ),
-              onPressed: () => visible.value = !visible.value,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -123,148 +85,11 @@ class InitialAuthView extends GetView<AuthController> {
 
                     if (exists == true) {
                       // LOGIN mode: show Password + Forgot Password
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          const SizedBox(height: 20),
-                          const Text(
-                            'Password',
-                            style: TextStyle(
-                              color: AppColors.textColor,
-                              fontSize: 15,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          _passwordField(
-                            textController: controller.loginPasswordController,
-                            visible: controller.loginPasswordVisible,
-                          ),
-                          const SizedBox(height: 8),
-                          Align(
-                            alignment: Alignment.centerRight,
-                            child: GestureDetector(
-                              onTap: () {},
-                              child: const Text(
-                                'Forgot Password',
-                                style: TextStyle(
-                                  color: AppColors.accentBlue,
-                                  fontSize: 14,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: AppColors.accentBlue,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
+                      return const LoginFormFields();
                     }
 
                     // SIGNUP mode: show Username + Password + Terms
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Username',
-                          style: TextStyle(
-                            color: AppColors.textColor,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        CustomTextField(
-                          controller: controller.signupNameController,
-                          hintText: 'Enter your username',
-                          fieldBgColor: AppColors.fieldBgColor,
-                          borderColor: AppColors.borderColor,
-                        ),
-                        const SizedBox(height: 20),
-                        const Text(
-                          'Password',
-                          style: TextStyle(
-                            color: AppColors.textColor,
-                            fontSize: 15,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        _passwordField(
-                          textController: controller.signupPasswordController,
-                          visible: controller.signupPasswordVisible,
-                        ),
-                        const SizedBox(height: 28),
-                        // Terms & Privacy checkbox
-                        Obx(
-                          () => Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              GestureDetector(
-                                onTap: () => controller.termsEnabled.value =
-                                    !controller.termsEnabled.value,
-                                child: Container(
-                                  width: 24,
-                                  height: 24,
-                                  decoration: BoxDecoration(
-                                    color: controller.termsEnabled.value
-                                        ? AppColors.accentBlue
-                                        : Colors.transparent,
-                                    border: Border.all(
-                                      color: AppColors.accentBlue,
-                                      width: 1.5,
-                                    ),
-                                    borderRadius: BorderRadius.circular(4),
-                                  ),
-                                  child: controller.termsEnabled.value
-                                      ? const Icon(
-                                          Icons.check,
-                                          color: AppColors.bgColor,
-                                          size: 16,
-                                        )
-                                      : null,
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: RichText(
-                                  text: TextSpan(
-                                    style: TextStyle(
-                                      color: AppColors.textColor.withOpacity(
-                                        0.8,
-                                      ),
-                                      fontSize: 14,
-                                      height: 1.4,
-                                    ),
-                                    children: const [
-                                      TextSpan(
-                                        text:
-                                            'By using our services you are agreeing to our\n',
-                                      ),
-                                      TextSpan(
-                                        text: 'Terms',
-                                        style: TextStyle(
-                                          color: AppColors.accentBlue,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                      TextSpan(text: ' and '),
-                                      TextSpan(
-                                        text: 'Privacy Policy',
-                                        style: TextStyle(
-                                          color: AppColors.accentBlue,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
-                    );
+                    return const SignupFormFields();
                   }),
 
                   const SizedBox(height: 36),
@@ -300,7 +125,7 @@ class InitialAuthView extends GetView<AuthController> {
                       onPressed = loading ? null : controller.userLogin;
                     } else {
                       label = 'SIGN UP';
-                      onPressed = loading ? null : controller.signup;
+                      onPressed = loading ? null : controller.sendMobileOtp;
                     }
 
                     return SizedBox(
@@ -365,32 +190,7 @@ class InitialAuthView extends GetView<AuthController> {
             ),
           ),
             // Loading overlay
-            Obx(() {
-              if (!controller.isLoading.value) return const SizedBox.shrink();
-              return AbsorbPointer(
-                absorbing: true,
-                child: Container(
-                  color: Colors.black.withOpacity(0.3),
-                  child: Center(
-                    child: Container(
-                      width: 72,
-                      height: 72,
-                      decoration: BoxDecoration(
-                        color: AppColors.fieldBgColor,
-                        borderRadius: BorderRadius.circular(16),
-                      ),
-                      child: const Center(
-                        child: CircularProgressIndicator(
-                          strokeWidth: 3,
-                          valueColor: AlwaysStoppedAnimation<Color>(
-                              AppColors.textColor),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              );
-            }),
+            LoadingOverlay(isLoading: controller.isLoading),
           ],
         ),
       ),

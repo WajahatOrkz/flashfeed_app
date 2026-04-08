@@ -20,44 +20,46 @@ class OtpBottomSheet extends GetView<AuthController> {
         top: 24,
         bottom: MediaQuery.of(context).viewInsets.bottom + 32,
       ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          // Handle bar
-          Container(
-            width: 40,
-            height: 4,
-            decoration: BoxDecoration(
-              color: AppColors.borderColor,
-              borderRadius: BorderRadius.circular(2),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            // Handle bar
+            Container(
+              width: 40,
+              height: 4,
+              decoration: BoxDecoration(
+                color: AppColors.borderColor,
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-          ),
-          const SizedBox(height: 24),
-          const Text(
-            'Enter OTP',
-            style: TextStyle(
-              color: AppColors.textColor,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
+            const SizedBox(height: 24),
+            const Text(
+              'Enter OTP',
+              style: TextStyle(
+                color: AppColors.textColor,
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          const SizedBox(height: 8),
-          Obx(() => Text(
-                'OTP sent to ${controller.loginEmailController.text.trim()}',
-                style: TextStyle(
-                  color: AppColors.textColor.withOpacity(0.6),
-                  fontSize: 14,
-                ),
-                textAlign: TextAlign.center,
-              )),
-          const SizedBox(height: 32),
-          // 6 OTP boxes
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: List.generate(6, (i) => OtpBox(index: i)),
-          ),
-          const SizedBox(height: 32),
-          Obx(() => SizedBox(
+            const SizedBox(height: 8),
+            Text(
+              'OTP sent to ${controller.loginEmailController.text.trim()}',
+              style: TextStyle(
+                color: AppColors.textColor.withOpacity(0.6),
+                fontSize: 14,
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 32),
+            // 4 OTP boxes
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: List.generate(4, (i) => OtpBox(index: i)),
+            ),
+            const SizedBox(height: 32),
+            Obx(
+              () => SizedBox(
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
@@ -78,7 +80,8 @@ class OtpBottomSheet extends GetView<AuthController> {
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
                             valueColor: AlwaysStoppedAnimation<Color>(
-                                AppColors.textColor),
+                              AppColors.textColor,
+                            ),
                           ),
                         )
                       : const Text(
@@ -91,22 +94,19 @@ class OtpBottomSheet extends GetView<AuthController> {
                           ),
                         ),
                 ),
-              )),
-          const SizedBox(height: 16),
-          TextButton(
-            onPressed: controller.signup,
-            child: const Text(
-              'Resend OTP',
-              style: TextStyle(
-                color: AppColors.accentBlue,
-                fontSize: 14,
               ),
             ),
-          ),
-        ],
+            const SizedBox(height: 16),
+            TextButton(
+              onPressed: controller.sendMobileOtp,
+              child: const Text(
+                'Resend OTP',
+                style: TextStyle(color: AppColors.accentBlue, fontSize: 14),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
 }
-
-
