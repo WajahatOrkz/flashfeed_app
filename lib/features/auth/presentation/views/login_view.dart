@@ -1,6 +1,7 @@
 import 'package:flashfeed_app/features/auth/presentation/widgets/custom_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/routes/routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
 
@@ -130,7 +131,7 @@ class LoginView extends GetView<AuthController> {
                 Align(
                   alignment: Alignment.centerRight,
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () => Get.toNamed(AppRoutes.forgotPassword),
                     child: const Text(
                       'Forgot Password',
                       style: TextStyle(

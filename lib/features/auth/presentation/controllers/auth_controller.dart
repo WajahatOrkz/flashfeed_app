@@ -1,11 +1,8 @@
 import 'package:flashfeed_app/core/routes/routes.dart';
 import 'package:flashfeed_app/core/services/shared_preferences_services.dart';
-import 'package:flashfeed_app/core/theme/app_colors.dart';
 import 'package:flashfeed_app/core/utils/app_snackbar.dart';
 import 'package:flashfeed_app/core/validation/validations.dart';
 import 'package:flashfeed_app/features/auth/presentation/widgets/otp_bottom_sheet.dart';
-import 'package:flashfeed_app/model/login_model.dart';
-import 'package:flashfeed_app/model/verify_otp_model.dart';
 import 'package:flashfeed_app/repositories/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -24,6 +21,11 @@ class AuthController extends GetxController {
   final signupEmailController = TextEditingController();
   final signupPasswordController = TextEditingController();
 
+  // Forgot Password Controllers
+  final forgotPasswordEmailController = TextEditingController();
+  final newPasswordController = TextEditingController();
+  final confirmPasswordController = TextEditingController();
+
   final RxBool isLoading = false.obs;
   final isUserExists = RxnBool();
   final continueButtonEnabled = true.obs;
@@ -33,14 +35,18 @@ class AuthController extends GetxController {
   // Password visibility toggles
   final loginPasswordVisible = false.obs;
   final signupPasswordVisible = false.obs;
+  final newPasswordVisible = false.obs;
+  final confirmPasswordVisible = false.obs;
 
-  // OTP Controllers (6 boxes)
+  // OTP Controllers (4 boxes)
   final List<TextEditingController> otpControllers = List.generate(
     4,
     (_) => TextEditingController(),
   );
   final List<FocusNode> otpFocusNodes = List.generate(4, (_) => FocusNode());
   final RxBool isOtpLoading = false.obs;
+  final RxBool isForgotOtpLoading = false.obs;
+  final RxBool isLogoutLoading = false.obs;
 
   @override
   void onInit() {
@@ -69,11 +75,33 @@ class AuthController extends GetxController {
     signupNameController.dispose();
     signupEmailController.dispose();
     signupPasswordController.dispose();
+    forgotPasswordEmailController.dispose();
+    newPasswordController.dispose();
+    confirmPasswordController.dispose();
     for (final c in otpControllers) c.dispose();
     for (final f in otpFocusNodes) f.dispose();
     super.onClose();
   }
 
+  void resetAuthState() {
+    isUserExists.value = null;
+    loginPasswordController.clear();
+    signupNameController.clear();
+    signupPasswordController.clear();
+    loginPasswordVisible.value = false;
+    signupPasswordVisible.value = false;
+  }
+
+  void clearForgotPasswordState() {
+    forgotPasswordEmailController.clear();
+    newPasswordController.clear();
+    confirmPasswordController.clear();
+    newPasswordVisible.value = false;
+    confirmPasswordVisible.value = false;
+    for (final c in otpControllers) c.clear();
+  }
+
+  // user existence check method
   Future<void> checkUserExists(String email) async {
     final emailError = Validators.validateEmail(email);
     if (emailError != null) {
@@ -98,15 +126,6 @@ class AuthController extends GetxController {
     } finally {
       isLoading.value = false;
     }
-  }
-
-  void resetAuthState() {
-    isUserExists.value = null;
-    loginPasswordController.clear();
-    signupNameController.clear();
-    signupPasswordController.clear();
-    loginPasswordVisible.value = false;
-    signupPasswordVisible.value = false;
   }
 
   // --- Login Methods ---
@@ -195,7 +214,13 @@ class AuthController extends GetxController {
 
       for (final c in otpControllers) c.clear();
       Get.bottomSheet(
-        const OtpBottomSheet(),
+        OtpBottomSheet(
+          title: 'Enter OTP',
+          email: loginEmailController.text.trim(),
+          onVerify: verifyOtp,
+          onResend: sendMobileOtp,
+          isLoading: isOtpLoading,
+        ),
         isScrollControlled: true,
         backgroundColor: Colors.transparent,
       );
@@ -249,6 +274,126 @@ class AuthController extends GetxController {
       isOtpLoading.value = false;
       AppSnackbar.error(
         'Registration Failed',
+        e.toString().replaceAll('Exception: ', ''),
+      );
+    }
+  }
+
+  Future<void> forgotPasswordSendOtp() async {
+    final emailError = Validators.validateEmail(
+      forgotPasswordEmailController.text.trim(),
+    );
+    if (emailError != null) {
+      AppSnackbar.error('Invalid Email', emailError);
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+      await authRepo.forgotPasswordSendOtp(
+        forgotPasswordEmailController.text.trim(),
+      );
+
+      for (final c in otpControllers) c.clear();
+      Get.bottomSheet(
+        OtpBottomSheet(
+          title: 'Verify OTP',
+          email: forgotPasswordEmailController.text.trim(),
+          onVerify: verifyForgotPasswordOtp,
+          onResend: forgotPasswordSendOtp,
+          isLoading: isForgotOtpLoading,
+        ),
+        isScrollControlled: true,
+        backgroundColor: Colors.transparent,
+      );
+    } catch (e) {
+      AppSnackbar.error(
+        'Failed to Send OTP',
+        e.toString().replaceAll('Exception: ', ''),
+      );
+    } finally {
+      isLoading.value = false; // ✅ Hamesha reset hoga
+    }
+  }
+
+  Future<void> verifyForgotPasswordOtp() async {
+    final otp = otpControllers.map((c) => c.text).join();
+    if (otp.length < 4) {
+      AppSnackbar.error(
+        'Invalid OTP',
+        'Please enter the complete 4-digit OTP.',
+      );
+      return;
+    }
+
+    try {
+      isForgotOtpLoading.value = true;
+      await authRepo.forgotPasswordVerifyOtp(
+        forgotPasswordEmailController.text.trim(),
+        otp,
+      );
+      isForgotOtpLoading.value = false;
+      Get.back(); // close bottom sheet
+      Get.toNamed(AppRoutes.resetPassword);
+    } catch (e) {
+      isForgotOtpLoading.value = false;
+      AppSnackbar.error(
+        'OTP Verification Failed',
+        e.toString().replaceAll('Exception: ', ''),
+      );
+    }
+  }
+
+  Future<void> changePassword() async {
+    final newPass = newPasswordController.text.trim();
+    final confirmPass = confirmPasswordController.text.trim();
+
+    final passError = Validators.validateSignupPassword(newPass);
+    if (passError != null) {
+      AppSnackbar.error('Invalid Password', passError);
+      return;
+    }
+
+    if (newPass != confirmPass) {
+      AppSnackbar.error('Password Mismatch', 'Passwords do not match.');
+      return;
+    }
+
+    try {
+      isLoading.value = true;
+
+      await authRepo.changePassword(
+        forgotPasswordEmailController.text.trim(),
+        newPass,
+      );
+
+      AppSnackbar.success(
+        'Password Changed',
+        'Your password has been updated. Please log in.',
+      );
+
+      Get.offAllNamed(AppRoutes.login);
+    } catch (e) {
+      AppSnackbar.error('Failed', e.toString().replaceAll('Exception: ', ''));
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  Future<void> logout() async {
+    try {
+      isLogoutLoading.value = true;
+      final deviceId =
+          SharedPreferencesService.instance.deviceId ??
+          DateTime.now().millisecondsSinceEpoch.toString();
+      await authRepo.logout(deviceId);
+      await SharedPreferencesService.instance.clearUserSession();
+      isLogoutLoading.value = false;
+      Get.offAllNamed(AppRoutes.initialAuth);
+    } catch (e) {
+      isLogoutLoading.value = false;
+      AppSnackbar.error(
+        'Logout Failed',
         e.toString().replaceAll('Exception: ', ''),
       );
     }

@@ -6,7 +6,9 @@ import 'package:get/get_state_manager/src/simple/get_view.dart';
 
 class OtpBox extends GetView<AuthController> {
   final int index;
-  const OtpBox({super.key, required this.index});
+  final VoidCallback onComplete;
+
+  const OtpBox({super.key, required this.index, required this.onComplete});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +53,7 @@ class OtpBox extends GetView<AuthController> {
               controller.otpFocusNodes[index + 1].requestFocus();
             } else {
               controller.otpFocusNodes[index].unfocus();
-              controller.verifyOtp();
+              onComplete();
             }
           } else {
             if (index > 0) {

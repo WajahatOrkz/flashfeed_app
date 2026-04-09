@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../../../../core/routes/routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../controllers/auth_controller.dart';
 import 'auth_password_field.dart';
@@ -30,7 +31,7 @@ class LoginFormFields extends GetView<AuthController> {
         Align(
           alignment: Alignment.centerRight,
           child: GestureDetector(
-            onTap: () {},
+            onTap: () => Get.toNamed(AppRoutes.forgotPassword),
             child: const Text(
               'Forgot Password',
               style: TextStyle(

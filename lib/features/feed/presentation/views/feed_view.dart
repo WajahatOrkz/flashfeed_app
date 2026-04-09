@@ -1,3 +1,4 @@
+import 'package:flashfeed_app/features/auth/presentation/controllers/auth_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -11,13 +12,7 @@ class FeedView extends GetView<FeedController> {
     return Scaffold(
       backgroundColor: AppColors.bgColor,
       appBar: AppBar(
-        automaticallyImplyLeading: true,
-        // leading: GestureDetector(
-        //   onTap: () {
-        //     Get.back();
-        //   },
-        //   child: const Icon(Icons.arrow_back, color: AppColors.textColor),
-        // ),
+        automaticallyImplyLeading: false,
         title: const Text(
           'FlashFeed',
           style: TextStyle(color: AppColors.textColor),
@@ -25,6 +20,29 @@ class FeedView extends GetView<FeedController> {
         backgroundColor: AppColors.primaryColor,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          Obx(
+            () => Get.find<AuthController>().isLogoutLoading.value
+                ? const Padding(
+                    padding: EdgeInsets.all(14),
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(
+                          AppColors.textColor,
+                        ),
+                      ),
+                    ),
+                  )
+                : IconButton(
+                    icon: const Icon(Icons.logout, color: AppColors.textColor),
+                    tooltip: 'Logout',
+                    onPressed: Get.find<AuthController>().logout,
+                  ),
+          ),
+        ],
       ),
       body: const Center(
         child: Text(

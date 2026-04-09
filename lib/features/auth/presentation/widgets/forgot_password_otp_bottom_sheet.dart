@@ -1,24 +1,10 @@
 import 'package:flashfeed_app/core/theme/app_colors.dart';
-import 'package:flashfeed_app/features/auth/presentation/widgets/otp_box.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../controllers/auth_controller.dart';
 
-class OtpBottomSheet extends GetView<AuthController> {
-  final String title;
-  final String email;
-  final VoidCallback onVerify;
-  final VoidCallback onResend;
-  final RxBool isLoading;
-
-  const OtpBottomSheet({
-    super.key,
-    required this.title,
-    required this.email,
-    required this.onVerify,
-    required this.onResend,
-    required this.isLoading,
-  });
+class ForgotPasswordOtpBottomSheet extends GetView<AuthController> {
+  const ForgotPasswordOtpBottomSheet({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +33,9 @@ class OtpBottomSheet extends GetView<AuthController> {
               ),
             ),
             const SizedBox(height: 24),
-            Text(
-              title,
-              style: const TextStyle(
+            const Text(
+              'Verify OTP',
+              style: TextStyle(
                 color: AppColors.textColor,
                 fontSize: 22,
                 fontWeight: FontWeight.bold,
@@ -57,7 +43,7 @@ class OtpBottomSheet extends GetView<AuthController> {
             ),
             const SizedBox(height: 8),
             Text(
-              'OTP sent to $email',
+              'OTP sent to ${controller.forgotPasswordEmailController.text.trim()}',
               style: TextStyle(
                 color: AppColors.textColor.withOpacity(0.6),
                 fontSize: 14,
@@ -70,7 +56,7 @@ class OtpBottomSheet extends GetView<AuthController> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: List.generate(
                 4,
-                (i) => OtpBox(index: i, onComplete: onVerify),
+                (i) => _ForgotOtpBox(index: i),
               ),
             ),
             const SizedBox(height: 32),
@@ -79,15 +65,19 @@ class OtpBottomSheet extends GetView<AuthController> {
                 width: double.infinity,
                 height: 50,
                 child: ElevatedButton(
-                  onPressed: isLoading.value ? null : onVerify,
+                  onPressed: controller.isForgotOtpLoading.value
+                      ? null
+                      : controller.verifyForgotPasswordOtp,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.buttonBgColor,
+                    backgroundColor: AppColors.accentBlue,
+                    disabledBackgroundColor:
+                        AppColors.accentBlue.withOpacity(0.5),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     elevation: 0,
                   ),
-                  child: isLoading.value
+                  child: controller.isForgotOtpLoading.value
                       ? const SizedBox(
                           height: 22,
                           width: 22,
@@ -112,14 +102,78 @@ class OtpBottomSheet extends GetView<AuthController> {
             ),
             const SizedBox(height: 16),
             TextButton(
-              onPressed: onResend,
-              child: const Text(
-                'Resend OTP',
-                style: TextStyle(color: AppColors.accentBlue, fontSize: 14),
+              onPressed: () => Get.back(),
+              child: Text(
+                'Cancel',
+                style: TextStyle(
+                  color: AppColors.textColor.withOpacity(0.6),
+                  fontSize: 14,
+                ),
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// OTP box that calls [verifyForgotPasswordOtp] on the last digit.
+class _ForgotOtpBox extends GetView<AuthController> {
+  final int index;
+  const _ForgotOtpBox({required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 64,
+      height: 64,
+      child: TextField(
+        controller: controller.otpControllers[index],
+        focusNode: controller.otpFocusNodes[index],
+        textAlign: TextAlign.center,
+        keyboardType: TextInputType.number,
+        maxLength: 1,
+        style: const TextStyle(
+          color: AppColors.textColor,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+        decoration: InputDecoration(
+          counterText: '',
+          filled: true,
+          fillColor: AppColors.fieldBgColor,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:
+                const BorderSide(color: AppColors.borderColor, width: 1.5),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:
+                const BorderSide(color: AppColors.borderColor, width: 1.5),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide:
+                const BorderSide(color: AppColors.accentBlue, width: 2),
+          ),
+          contentPadding: EdgeInsets.zero,
+        ),
+        onChanged: (val) {
+          if (val.isNotEmpty) {
+            if (index < 3) {
+              controller.otpFocusNodes[index + 1].requestFocus();
+            } else {
+              controller.otpFocusNodes[index].unfocus();
+              controller.verifyForgotPasswordOtp();
+            }
+          } else {
+            if (index > 0) {
+              controller.otpFocusNodes[index - 1].requestFocus();
+            }
+          }
+        },
       ),
     );
   }

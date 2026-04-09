@@ -13,6 +13,7 @@ import 'package:http_parser/http_parser.dart';
 
 import '../../model/response_model.dart';
 import '../services/logs_services.dart';
+import '../services/shared_preferences_services.dart';
 
 class ApiClient extends GetConnect {
   factory ApiClient() {
@@ -23,7 +24,7 @@ class ApiClient extends GetConnect {
   static final ApiClient _instance = ApiClient._constructor();
 
   ApiClient._constructor();
-  String kUserToken = '';
+  String get kUserToken => SharedPreferencesService.instance.token ?? '';
   final _logsService = LogsService();
 
   /// Active HTTP clients for Android uploads, keyed by file path.

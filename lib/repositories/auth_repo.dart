@@ -1,7 +1,7 @@
 import 'package:flashfeed_app/core/api/endpoints.dart';
 import 'package:flashfeed_app/model/login_model.dart';
 import 'package:flashfeed_app/model/send_otp_model.dart';
-import 'package:flashfeed_app/model/verify_otp_model.dart';
+
 import 'package:get/get.dart';
 
 import '../core/api/api_client.dart';
@@ -79,7 +79,7 @@ class AuthRepo extends GetConnect {
     }
   }
 
-  Future<VerifyOtpModel> verifyMobileOtp(String email, String otp) async {
+  Future<SendOtpModel> verifyMobileOtp(String email, String otp) async {
     var body = {'email': email, 'otp': otp};
     try {
       final response = await apiClient.putRequestWithHeader(
@@ -87,7 +87,7 @@ class AuthRepo extends GetConnect {
         body: body,
       );
       if (response.statusCode == 200 && response.data['success'] == true) {
-        return VerifyOtpModel.fromJson(response.data);
+        return SendOtpModel.fromJson(response.data);
       } else {
         throw Exception(response.extractError('OTP verification failed'));
       }
@@ -123,6 +123,91 @@ class AuthRepo extends GetConnect {
     } catch (e) {
       if (e is Exception) rethrow;
       throw Exception('Registration failed. Please try again.');
+    }
+  }
+
+  Future<SendOtpModel> forgotPasswordSendOtp(String email) async {
+    var body = {'email': email};
+    try {
+      final response = await apiClient.postRequestWithHeader(
+        url: EndPoints.forgotPasswordSendOtp,
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final result = SendOtpModel.fromJson(response.data);
+        if (result.success == true) {
+          return result;
+        } else {
+          throw Exception(result.message ?? 'Failed to send OTP');
+        }
+      } else {
+        throw Exception(response.extractError('Failed to send OTP'));
+      }
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('Failed to send OTP. Please try again.');
+    }
+  }
+
+  Future<SendOtpModel> forgotPasswordVerifyOtp(String email, String otp) async {
+    var body = {'email': email, 'otp': otp};
+    try {
+      final response = await apiClient.putRequestWithHeader(
+        url: EndPoints.forgotPasswordVerifyOtp,
+        body: body,
+      );
+      if (response.statusCode == 200 && response.data['success'] == true) {
+        return SendOtpModel.fromJson(response.data);
+      } else {
+        throw Exception(response.extractError('OTP verification failed'));
+      }
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('OTP verification failed. Please try again.');
+    }
+  }
+
+  Future<SendOtpModel> changePassword(String email, String newPassword) async {
+    var body = {'email': email, 'newPassword': newPassword};
+
+    try {
+      final response = await apiClient.putRequestWithHeader(
+        url: EndPoints.changePassword,
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+        final result = SendOtpModel.fromJson(response.data);
+
+        if (result.success == true) {
+          return result;
+        } else {
+          throw Exception(result.message ?? 'Failed to change password');
+        }
+      } else {
+        throw Exception('Server error');
+      }
+    } catch (e) {
+      throw Exception('Failed to change password: ${e.toString()}');
+    }
+  }
+
+  Future<void> logout(String deviceId) async {
+    var body = {'deviceId': deviceId};
+    try {
+      final response = await apiClient.postRequestWithHeader(
+        url: EndPoints.logout,
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        return;
+      } else {
+        throw Exception(response.extractError('Logout failed'));
+      }
+    } catch (e) {
+      if (e is Exception) rethrow;
+      throw Exception('Logout failed. Please try again.');
     }
   }
 }
