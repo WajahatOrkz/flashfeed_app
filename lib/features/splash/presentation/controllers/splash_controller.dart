@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import '../../../../core/routes/routes.dart';
+import '../../../../core/services/shared_preferences_services.dart';
 
 class SplashController extends GetxController {
   @override
@@ -9,17 +10,14 @@ class SplashController extends GetxController {
   }
 
   void _checkLoginStatus() async {
-    // Simulate loading time for splash screen
     await Future.delayed(const Duration(seconds: 2));
 
-    // Simulate checking if user is logged in
-    // Real implementation should check secure storage or SharedPreferences
-    bool isLoggedIn = false;
+    final isLoggedIn = SharedPreferencesService.instance.isLoggedIn;
 
     if (isLoggedIn) {
-      // Get.offAllNamed(AppRoutes.feed); // Navigate to Feed if logged in
+      Get.offAllNamed(AppRoutes.feed);
     } else {
-      Get.offAllNamed(AppRoutes.initialAuth); // Navigate to InitialAuth if not logged in
+      Get.offAllNamed(AppRoutes.initialAuth);
     }
   }
 }
