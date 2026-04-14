@@ -3,6 +3,7 @@ class AppRoutes {
 
   /// -- Route Names --
   static const String splash = '/splash';
+  static const String onboarding = '/onboarding';
   static const String initialAuth = '/initialAuth';
   static const String login = '/login';
   static const String signUp = '/signUp';

@@ -133,4 +133,10 @@ class SharedPreferencesService {
   String? get userEmail => getString('user_email');
   String? get userName => getString('user_name');
   String? get deviceId => getString('device_id');
+
+  // ==================== Onboarding ====================
+
+  bool get hasSeenOnboarding => getBool('has_seen_onboarding') ?? false;
+
+  Future<bool> setOnboardingSeen() => setBool('has_seen_onboarding', true);
 }

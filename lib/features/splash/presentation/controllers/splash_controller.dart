@@ -12,10 +12,12 @@ class SplashController extends GetxController {
   void _checkLoginStatus() async {
     await Future.delayed(const Duration(seconds: 2));
 
-    final isLoggedIn = SharedPreferencesService.instance.isLoggedIn;
+    final prefs = SharedPreferencesService.instance;
 
-    if (isLoggedIn) {
+    if (prefs.isLoggedIn) {
       Get.offAllNamed(AppRoutes.feed);
+    } else if (!prefs.hasSeenOnboarding) {
+      Get.offAllNamed(AppRoutes.onboarding);
     } else {
       Get.offAllNamed(AppRoutes.initialAuth);
     }

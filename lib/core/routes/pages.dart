@@ -1,12 +1,14 @@
 import 'package:get/get.dart';
 import '../../features/auth/presentation/bindings/auth_binding.dart';
-import '../../features/auth/presentation/views/forgot_password_screen.dart';
+import '../../features/auth/presentation/views/forgot_password_view.dart';
 import '../../features/auth/presentation/views/initial_auth_view.dart';
 import '../../features/auth/presentation/views/login_view.dart';
-import '../../features/auth/presentation/views/reset_password_screen.dart';
+import '../../features/auth/presentation/views/reset_password_view.dart';
 import '../../features/auth/presentation/views/signup_view.dart';
 import '../../features/feed/presentation/bindings/feed_binding.dart';
 import '../../features/feed/presentation/views/feed_view.dart';
+import '../../features/onboarding/presentation/binding/onboarding_binding.dart';
+import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/splash/presentation/bindings/splash_binding.dart';
 import '../../features/splash/presentation/views/splash_view.dart';
 import 'routes.dart';
@@ -17,6 +19,12 @@ class AppPages {
       name: AppRoutes.splash,
       page: () => const SplashView(),
       binding: SplashBinding(),
+      transition: Transition.noTransition,
+    ),
+    GetPage(
+      name: AppRoutes.onboarding,
+      page: () => const OnboardingPage(),
+      binding: OnboardingBinding(),
       transition: Transition.noTransition,
     ),
     GetPage(
