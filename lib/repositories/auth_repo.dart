@@ -168,30 +168,30 @@ class AuthRepo extends GetConnect {
     }
   }
 
-  Future<SendOtpModel> changePassword(String email, String newPassword) async {
-    var body = {'email': email, 'newPassword': newPassword};
+Future<SendOtpModel> changePassword(String email, String newPassword) async {
+  var body = {'email': email, 'newPassword': newPassword};
 
-    try {
-      final response = await apiClient.putRequestWithHeader(
-        url: EndPoints.changePassword,
-        body: body,
-      );
+  try {
+    final response = await apiClient.putRequestWithHeader(
+      url: EndPoints.changePassword,
+      body: body,
+    );
 
-      if (response.statusCode == 200) {
-        final result = SendOtpModel.fromJson(response.data);
+    if (response.statusCode == 200) {
+      final result = SendOtpModel.fromJson(response.data);
 
-        if (result.success == true) {
-          return result;
-        } else {
-          throw Exception(result.message ?? 'Failed to change password');
-        }
+      if (result.success == true) {
+        return result;
       } else {
-        throw Exception('Server error');
+        throw Exception(result.message ?? 'Failed to change password');
       }
-    } catch (e) {
-      throw Exception('Failed to change password: ${e.toString()}');
+    } else {
+      throw Exception('Server error');
     }
+  } catch (e) {
+    throw Exception('Failed to change password: ${e.toString()}');
   }
+}
 
   Future<void> logout(String deviceId) async {
     var body = {'deviceId': deviceId};
