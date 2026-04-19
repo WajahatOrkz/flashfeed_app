@@ -11,7 +11,7 @@ class FeedBinding extends Bindings {
   void dependencies() {
     Get.lazyPut<FeedController>(() => FeedController());
     Get.lazyPut<ReelsController>(() => ReelsController());
-    Get.lazyPut<ProfileController>(() => ProfileController());
+    Get.lazyPut<UserProfileController>(() => UserProfileController());
 
     if (!Get.isRegistered<AuthRepo>()) {
       Get.put(AuthRepo(apiClient: ApiClient()), permanent: true);
