@@ -18,9 +18,9 @@ class ProfileView extends GetView<UserProfileController> {
         child: Column(
           children: [
             ProfileAppBar(
-            onBack: () => Get.find<FeedController>().onTabChanged(0),
-            onMenu: () {},
-          ),
+              onBack: () => Get.find<FeedController>().onTabChanged(0),
+              onMenu: () {},
+            ),
 
             Obx(
               () => ProfileHeader(imageUrl: controller.profileImageUrl.value),
