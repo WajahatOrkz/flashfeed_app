@@ -46,6 +46,6 @@ class OnboardingController extends GetxController {
 
   Future<void> _finishOnboarding() async {
     await SharedPreferencesService.instance.setOnboardingSeen();
-    Get.offAllNamed(AppRoutes.initialAuth);
+    Get.offAllNamed(AppRoutes.initialAuthRoute);
   }
 }

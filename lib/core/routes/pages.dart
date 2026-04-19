@@ -16,46 +16,46 @@ import 'routes.dart';
 class AppPages {
   static final pages = [
     GetPage(
-      name: AppRoutes.splash,
+      name: AppRoutes.splashRoute,
       page: () => const SplashView(),
       binding: SplashBinding(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: AppRoutes.onboarding,
+      name: AppRoutes.onboardingRoute,
       page: () => const OnboardingPage(),
       binding: OnboardingBinding(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: AppRoutes.initialAuth,
+      name: AppRoutes.initialAuthRoute,
       page: () => const InitialAuthView(),
       binding: AuthBinding(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: AppRoutes.login,
+      name: AppRoutes.loginRoute,
       page: () => const LoginView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: AppRoutes.signUp,
+      name: AppRoutes.signUpRoute,
       page: () => const SignupView(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: AppRoutes.feed,
+      name: AppRoutes.feedRoute,
       page: () => const FeedView(),
       binding: FeedBinding(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: AppRoutes.forgotPassword,
+      name: AppRoutes.forgotPasswordRoute,
       page: () => const ForgotPasswordScreen(),
       transition: Transition.noTransition,
     ),
     GetPage(
-      name: AppRoutes.resetPassword,
+      name: AppRoutes.resetPasswordRoute,
       page: () => const ResetPasswordScreen(),
       transition: Transition.noTransition,
     ),

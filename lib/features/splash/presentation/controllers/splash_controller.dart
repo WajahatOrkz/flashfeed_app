@@ -15,11 +15,11 @@ class SplashController extends GetxController {
     final prefs = SharedPreferencesService.instance;
 
     if (prefs.isLoggedIn) {
-      Get.offAllNamed(AppRoutes.feed);
+      Get.offAllNamed(AppRoutes.feedRoute);
     } else if (!prefs.hasSeenOnboarding) {
-      Get.offAllNamed(AppRoutes.onboarding);
+      Get.offAllNamed(AppRoutes.onboardingRoute);
     } else {
-      Get.offAllNamed(AppRoutes.initialAuth);
+      Get.offAllNamed(AppRoutes.initialAuthRoute);
     }
   }
 }

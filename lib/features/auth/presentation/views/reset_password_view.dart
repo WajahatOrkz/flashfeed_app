@@ -23,7 +23,7 @@ class ResetPasswordScreen extends GetView<AuthController> {
             icon: const Icon(Icons.arrow_back_ios, color: AppColors.textColor),
             onPressed: () {
               controller.clearForgotPasswordState();
-              Get.offAllNamed(AppRoutes.initialAuth);
+              Get.offAllNamed(AppRoutes.initialAuthRoute);
             },
           ),
         ),

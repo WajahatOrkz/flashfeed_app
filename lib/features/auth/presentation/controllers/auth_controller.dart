@@ -159,7 +159,7 @@ class AuthController extends GetxController {
           name: response.name ?? '',
         );
         isUserLogin.value = true;
-        Get.toNamed(AppRoutes.feed);
+        Get.toNamed(AppRoutes.feedRoute);
       }
 
       AppSnackbar.success(
@@ -269,7 +269,7 @@ class AuthController extends GetxController {
 
       isOtpLoading.value = false;
       Get.back(); // close bottom sheet
-      Get.toNamed(AppRoutes.feed);
+      Get.toNamed(AppRoutes.feedRoute);
     } catch (e) {
       isOtpLoading.value = false;
       AppSnackbar.error(
@@ -334,7 +334,7 @@ class AuthController extends GetxController {
       );
       isForgotOtpLoading.value = false;
       Get.back(); // close bottom sheet
-      Get.toNamed(AppRoutes.resetPassword);
+      Get.toNamed(AppRoutes.resetPasswordRoute);
     } catch (e) {
       isForgotOtpLoading.value = false;
       AppSnackbar.error(
@@ -372,7 +372,7 @@ class AuthController extends GetxController {
         'Your password has been updated. Please log in.',
       );
 
-      Get.offAllNamed(AppRoutes.login);
+      Get.offAllNamed(AppRoutes.loginRoute);
     } catch (e) {
       AppSnackbar.error('Failed', e.toString().replaceAll('Exception: ', ''));
     } finally {
@@ -389,7 +389,7 @@ class AuthController extends GetxController {
       await authRepo.logout(deviceId);
       await SharedPreferencesService.instance.clearUserSession();
       isLogoutLoading.value = false;
-      Get.offAllNamed(AppRoutes.initialAuth);
+      Get.offAllNamed(AppRoutes.initialAuthRoute);
     } catch (e) {
       isLogoutLoading.value = false;
       AppSnackbar.error(
