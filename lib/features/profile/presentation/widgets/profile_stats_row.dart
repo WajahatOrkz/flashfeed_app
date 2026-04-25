@@ -15,26 +15,24 @@ class ProfileStatsRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
       padding: const EdgeInsets.symmetric(vertical: 16),
-      decoration: const BoxDecoration(
-        color: AppColors.buttonBgColor,
-        border: Border(
-          bottom: BorderSide(
-            color: AppColors.bgColor,
-            width: 2,
+      decoration: BoxDecoration(
+        color: AppColors.fieldBgColor, // Use a slightly lighter dark color
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.2),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-        ),
+        ],
       ),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           StatItem(count: followers.toString(), label: 'Followers'),
-          Container(
-            height: 40,
-            width: 1,
-            margin: const EdgeInsets.symmetric(horizontal: 30),
-            color: AppColors.dividerColor,
-          ),
+          Container(height: 40, width: 1, color: AppColors.dividerColor),
           StatItem(count: following.toString(), label: 'Following'),
         ],
       ),

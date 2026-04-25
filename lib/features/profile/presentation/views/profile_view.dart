@@ -1,3 +1,4 @@
+import 'package:flashfeed_app/core/theme/app_colors.dart';
 import 'package:flashfeed_app/features/profile/presentation/widgets/custom_appbar.dart';
 import 'package:flashfeed_app/features/profile/presentation/widgets/custom_profile_header.dart';
 import 'package:flashfeed_app/features/profile/presentation/widgets/custom_profile_media_grid.dart';
@@ -13,30 +14,40 @@ class ProfileView extends GetView<UserProfileController> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          children: [
-            ProfileAppBar(
-              onBack: () => Get.find<FeedController>().onTabChanged(0),
-              onMenu: () {},
-            ),
-
-            Obx(
-              () => ProfileHeader(imageUrl: controller.profileImageUrl.value),
-            ),
-
-            Obx(
-              () => ProfileStatsRow(
-                followers: controller.followerCount.value,
-                following: controller.followingCount.value,
+    return Scaffold(
+      backgroundColor: AppColors.bgColor, // Deep dark matching the app
+      body: SafeArea(
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          child: Column(
+            children: [
+              ProfileAppBar(
+                onBack: () => Get.find<FeedController>().onTabChanged(0),
+                onMenu: () {},
               ),
-            ),
 
-            EditProfileButton(onPressed: controller.editProfile),
+              const SizedBox(height: 10),
 
-            ProfileMediaGrid(items: controller.mediaItems),
-          ],
+              Obx(
+                () => ProfileHeader(
+                  imageUrl: controller.profileImageUrl.value,
+                  name: controller.username.value,
+                ),
+              ),
+
+              Obx(
+                () => ProfileStatsRow(
+                  followers: controller.followerCount.value,
+                  following: controller.followingCount.value,
+                ),
+              ),
+
+              EditProfileButton(onPressed: controller.editProfile),
+
+              ProfileMediaGrid(items: controller.mediaItems),
+              const SizedBox(height: 30),
+            ],
+          ),
         ),
       ),
     );

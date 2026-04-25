@@ -10,17 +10,26 @@ class EditProfileButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 30, vertical: 20),
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.buttonBgColor,
-          foregroundColor: AppColors.textColor,
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          backgroundColor: AppColors.primaryColor,
+          foregroundColor: Colors.black, // Dark text on primary button
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          elevation: 5,
+          shadowColor: AppColors.primaryColor.withValues(alpha: 0.4),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
         ),
         child: const Text(
           'Edit Profile',
-          style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
+          ),
         ),
       ),
     );

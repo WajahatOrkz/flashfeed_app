@@ -11,4 +11,5 @@ class AppRoutes {
   static const String reelsRoute = '/reels';
   static const String forgotPasswordRoute = '/forgotPassword';
   static const String resetPasswordRoute = '/resetPassword';
+  static const String editProfileRoute = '/editProfile';
 }

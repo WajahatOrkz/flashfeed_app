@@ -5,11 +5,7 @@ class StatItem extends StatelessWidget {
   final String count;
   final String label;
 
-  const StatItem({
-    super.key,
-    required this.count,
-    required this.label,
-  });
+  const StatItem({super.key, required this.count, required this.label});
 
   @override
   Widget build(BuildContext context) {
@@ -26,10 +22,7 @@ class StatItem extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(
-            color: AppColors.iconGrey,
-            fontSize: 14,
-          ),
+          style: const TextStyle(color: AppColors.iconGrey, fontSize: 14),
         ),
       ],
     );

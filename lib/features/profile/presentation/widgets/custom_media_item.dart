@@ -19,9 +19,7 @@ class MediaItemWidget extends StatelessWidget {
           errorBuilder: (_, __, ___) => Container(
             color: AppColors.fieldBgColor,
             child: Icon(
-              item.type == MediaType.video
-                  ? Icons.videocam
-                  : Icons.image,
+              item.type == MediaType.video ? Icons.videocam : Icons.image,
               color: AppColors.iconGrey,
               size: 40,
             ),

@@ -1,4 +1,5 @@
 import 'package:flashfeed_app/core/theme/app_colors.dart';
+import 'package:flashfeed_app/core/routes/routes.dart';
 import 'package:flashfeed_app/features/profile/data/models/profile_media_item_model.dart';
 import 'package:get/get.dart';
 
@@ -18,11 +19,11 @@ class UserProfileController extends GetxController {
 
   void loadProfileData() {
     isLoading.value = true;
-    
+
     // Simulate loading profile data
     username.value = 'Bloomville';
     profileImageUrl.value = 'https://picsum.photos/200/200?random=profile';
-    
+
     // Generate sample media items
     mediaItems.value = List.generate(12, (index) {
       return ProfileMediaItem(
@@ -31,7 +32,7 @@ class UserProfileController extends GetxController {
         thumbnailUrl: 'https://picsum.photos/300/300?random=${index + 20}',
       );
     });
-    
+
     isLoading.value = false;
   }
 
@@ -48,13 +49,6 @@ class UserProfileController extends GetxController {
   }
 
   void editProfile() {
-    // Handle edit profile action
-    Get.snackbar(
-      'Edit Profile',
-      'Edit profile functionality',
-      backgroundColor: AppColors.fieldBgColor,
-      colorText: AppColors.textColor,
-      snackPosition: SnackPosition.BOTTOM,
-    );
+    Get.toNamed(AppRoutes.editProfileRoute);
   }
 }

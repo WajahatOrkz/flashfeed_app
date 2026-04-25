@@ -5,17 +5,13 @@ class ProfileAppBar extends StatelessWidget {
   final VoidCallback? onBack;
   final VoidCallback? onMenu;
 
-  const ProfileAppBar({
-    super.key,
-    this.onBack,
-    this.onMenu,
-  });
+  const ProfileAppBar({super.key, this.onBack, this.onMenu});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: AppColors.buttonBgColor,
+      color: Colors.transparent, // cleaner header
       child: Row(
         children: [
           GestureDetector(
