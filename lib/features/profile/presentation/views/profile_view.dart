@@ -17,37 +17,60 @@ class ProfileView extends GetView<UserProfileController> {
     return Scaffold(
       backgroundColor: AppColors.bgColor, // Deep dark matching the app
       body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            children: [
-              ProfileAppBar(
-                onBack: () => Get.find<FeedController>().onTabChanged(0),
-                onMenu: () {},
-              ),
+        child: Column(
+          children: [
+            // Keep AppBar pinned at the top
+            ProfileAppBar(
+              onBack: () => Get.find<FeedController>().onTabChanged(0),
+              onMenu: () {},
+            ),
 
-              const SizedBox(height: 10),
+            Expanded(
+              child: SingleChildScrollView(
+                physics: const BouncingScrollPhysics(),
+                child: Column(
+                  children: [
+                    const SizedBox(height: 20),
 
-              Obx(
-                () => ProfileHeader(
-                  imageUrl: controller.profileImageUrl.value,
-                  name: controller.username.value,
+                    // Profile Header (Avatar & Name)
+                    Obx(
+                      () => ProfileHeader(
+                        imageUrl: controller.profileImageUrl.value,
+                        name: controller.username.value,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Stats (Followers, Following, etc.)
+                    Obx(
+                      () => ProfileStatsRow(
+                        followers: controller.followerCount.value,
+                        following: controller.followingCount.value,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Edit Profile Button
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: EditProfileButton(
+                        onPressed: controller.editProfile,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
+
+                    // Subtle Divider to separate profile info from media content
+                    Divider(color: Colors.grey.withOpacity(0.2), thickness: 1),
+                    const SizedBox(height: 10),
+
+                    // Media Grid
+                    ProfileMediaGrid(items: controller.mediaItems),
+                    const SizedBox(height: 40),
+                  ],
                 ),
               ),
-
-              Obx(
-                () => ProfileStatsRow(
-                  followers: controller.followerCount.value,
-                  following: controller.followingCount.value,
-                ),
-              ),
-
-              EditProfileButton(onPressed: controller.editProfile),
-
-              ProfileMediaGrid(items: controller.mediaItems),
-              const SizedBox(height: 30),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
