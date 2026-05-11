@@ -279,6 +279,37 @@ class ApiClient extends GetConnect {
     }
   }
 
+  /// PUT Multipart (for image update APIs that require PUT method)
+  Future<ResponseModel> putMultipartRequest({
+    required String url,
+    required String filePath,
+    String filed = 'file',
+    MediaType? mediaType,
+  }) async {
+    try {
+      final request = http.MultipartRequest('PUT', Uri.parse(url));
+      request.headers['token'] = kUserToken;
+
+      request.files.add(
+        await http.MultipartFile.fromPath(
+          filed,
+          filePath,
+          contentType: mediaType,
+        ),
+      );
+
+      final streamedResponse = await request.send();
+      final response = await http.Response.fromStream(streamedResponse);
+
+      return ResponseModel.named(
+        statusCode: response.statusCode,
+        data: response.body.isNotEmpty ? jsonDecode(response.body) : {},
+      );
+    } catch (e) {
+      return ResponseModel.named(statusCode: 500, data: e.toString());
+    }
+  }
+
   Future<ResponseModel> _uploadWithHttpPackage({
     required String url,
     dynamic body,

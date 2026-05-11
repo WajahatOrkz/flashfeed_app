@@ -3,6 +3,7 @@ import 'package:flashfeed_app/core/services/shared_preferences_services.dart';
 import 'package:flashfeed_app/core/utils/app_snackbar.dart';
 import 'package:flashfeed_app/core/validation/validations.dart';
 import 'package:flashfeed_app/features/auth/presentation/widgets/otp_bottom_sheet.dart';
+import 'package:flashfeed_app/features/profile/presentation/controllers/profile_controller.dart';
 import 'package:flashfeed_app/repositories/auth_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -152,11 +153,17 @@ class AuthController extends GetxController {
         loginPasswordController.text.trim(),
       );
 
+      print('Login response sId: "${response.sId}"');
+      print('Login response name: "${response.name}"');
       if (response.authToken != null) {
         await SharedPreferencesService.instance.saveUserSession(
           token: response.authToken!,
           email: response.email ?? '',
           name: response.name ?? '',
+          userId: response.sId,
+        );
+        print(
+          'Saved userId to prefs: "${SharedPreferencesService.instance.userId}"',
         );
         isUserLogin.value = true;
         Get.toNamed(AppRoutes.feedRoute);
@@ -262,6 +269,7 @@ class AuthController extends GetxController {
           token: user.authToken!,
           email: user.email ?? loginEmailController.text.trim(),
           name: user.name ?? signupNameController.text.trim(),
+          userId: user.sId,
           deviceId: deviceId,
         );
         isUserLogin.value = true;
@@ -389,6 +397,10 @@ class AuthController extends GetxController {
       await authRepo.logout(deviceId);
       await SharedPreferencesService.instance.clearUserSession();
       isLogoutLoading.value = false;
+      // Reset profile controller state so fresh data loads on next login
+      if (Get.isRegistered<UserProfileController>()) {
+        Get.find<UserProfileController>().resetProfile();
+      }
       Get.offAllNamed(AppRoutes.initialAuthRoute);
     } catch (e) {
       isLogoutLoading.value = false;

@@ -112,11 +112,13 @@ class SharedPreferencesService {
     required String token,
     required String email,
     required String name,
+    String? userId,
     String? deviceId,
   }) async {
     await setString('auth_token', token);
     await setString('user_email', email);
     await setString('user_name', name);
+    if (userId != null) await setString('user_id', userId);
     if (deviceId != null) await setString('device_id', deviceId);
     await setBool('is_logged_in', true);
   }
@@ -126,12 +128,14 @@ class SharedPreferencesService {
     await remove('auth_token');
     await remove('user_email');
     await remove('user_name');
+    await remove('user_id');
     await remove('device_id');
     await setBool('is_logged_in', false);
   }
 
   String? get userEmail => getString('user_email');
   String? get userName => getString('user_name');
+  String? get userId => getString('user_id');
   String? get deviceId => getString('device_id');
 
   // ==================== Onboarding ====================

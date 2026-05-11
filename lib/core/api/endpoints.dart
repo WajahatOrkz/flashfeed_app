@@ -51,4 +51,16 @@ class EndPoints {
       "$userBase/referallCode/stats";
   static const String getReferralChart =
       "$userBase/referallCode/invitesChart";
+
+
+  // =========================
+  // 🧑 Profile & Passions
+  // =========================
+  static const String getUserImage = "$user/image"; // + /{userId}
+  static const String getUserProfile = "$user/getUser"; // + /{userId}
+  static const String getPassions = "$userBase/Passion/get";
+  static const String getUserPassions = "$user/passion"; // + /{userId}
+  static const String updateUserImage = "$user/updateImage"; // + /{userId}
+  static const String updateUserInfo = "$user/updateUser"; // + /{userId}
+
 }

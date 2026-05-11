@@ -1,6 +1,8 @@
-import 'package:flashfeed_app/core/theme/app_colors.dart';
+import 'package:flashfeed_app/core/api/api_client.dart';
 import 'package:flashfeed_app/core/routes/routes.dart';
+import 'package:flashfeed_app/core/services/shared_preferences_services.dart';
 import 'package:flashfeed_app/features/profile/data/models/profile_media_item_model.dart';
+import 'package:flashfeed_app/features/profile/data/repositories/profile_repo.dart';
 import 'package:get/get.dart';
 
 class UserProfileController extends GetxController {
@@ -8,30 +10,45 @@ class UserProfileController extends GetxController {
   var followingCount = 27.obs;
   var mediaItems = <ProfileMediaItem>[].obs;
   var isLoading = false.obs;
-  var username = 'User'.obs;
+  var username = ''.obs;
   var profileImageUrl = ''.obs;
+
+  late final ProfileRepo _profileRepo;
 
   @override
   void onInit() {
     super.onInit();
+    _profileRepo = ProfileRepo(apiClient: ApiClient());
     loadProfileData();
   }
 
-  void loadProfileData() {
+  Future<void> loadProfileData() async {
     isLoading.value = true;
 
-    // Simulate loading profile data
-    username.value = 'Bloomville';
-    profileImageUrl.value = 'https://picsum.photos/200/200?random=profile';
+    final userId = SharedPreferencesService.instance.userId ?? '';
 
-    // Generate sample media items
-    mediaItems.value = List.generate(12, (index) {
-      return ProfileMediaItem(
-        id: 'media_$index',
-        type: index % 3 == 1 ? MediaType.video : MediaType.image,
-        thumbnailUrl: 'https://picsum.photos/300/300?random=${index + 20}',
-      );
-    });
+    if (userId.isNotEmpty) {
+      // Fetch name from API
+      final userProfile = await _profileRepo.getUserProfile(userId);
+      if (userProfile != null && userProfile.name.isNotEmpty) {
+        username.value = userProfile.name;
+      }
+
+      // Fetch fresh signed image URL from API
+      final imageUrl = await _profileRepo.getUserImage(userId);
+      if (imageUrl != null && imageUrl.isNotEmpty) {
+        profileImageUrl.value = imageUrl;
+      }
+    }
+
+    // Sample media items (replace with real API when available)
+    // mediaItems.value = List.generate(12, (index) {
+    //   return ProfileMediaItem(
+    //     id: 'media_$index',
+    //     type: index % 3 == 1 ? MediaType.video : MediaType.image,
+    //     thumbnailUrl: 'https://picsum.photos/300/300?random=${index + 20}',
+    //   );
+    // });
 
     isLoading.value = false;
   }
@@ -44,8 +61,14 @@ class UserProfileController extends GetxController {
     followingCount.value = count;
   }
 
-  void refreshProfile() {
-    loadProfileData();
+  Future<void> refreshProfile() async {
+    await loadProfileData();
+  }
+
+  void resetProfile() {
+    username.value = '';
+    profileImageUrl.value = '';
+    mediaItems.value = [];
   }
 
   void editProfile() {

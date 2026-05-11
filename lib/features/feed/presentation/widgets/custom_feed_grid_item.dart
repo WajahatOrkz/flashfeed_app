@@ -13,47 +13,90 @@ class FeedGridItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: onTap,
-      child: Stack(
-        children: [
-          Container(
-            decoration: BoxDecoration(
-              color: item.isBlue
-                  ? AppColors.primaryColor
-                  : AppColors.fieldBgColor,
-            ),
-            child: _buildItemContent(),
-          ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(4),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // Background content
+            _buildItemContent(),
 
-          if (item.isSelected || item.type == FeedItemType.carousel)
-            _topLeftIcon(),
+            // Dark gradient overlay for non-empty items
+            if (item.type != FeedItemType.empty &&
+                item.type != FeedItemType.placeholder)
+              Positioned(
+                bottom: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  height: 32,
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.bottomCenter,
+                      end: Alignment.topCenter,
+                      colors: [
+                        Colors.black.withOpacity(0.55),
+                        Colors.transparent,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
 
-          if (item.hasOverlay && item.type == FeedItemType.video)
-            _topRightBlock(),
+            // Top-left: selected check or carousel icon
+            if (item.isSelected || item.type == FeedItemType.carousel)
+              _topLeftIcon(),
 
-          if (item.type == FeedItemType.video ||
-              item.type == FeedItemType.carousel)
-            _bottomPlayIcon(),
-        ],
+            // Top-right: blocked indicator
+            if (item.hasOverlay && item.type == FeedItemType.video)
+              _topRightBlock(),
+
+            // Bottom-left: video/carousel play icon
+            if (item.type == FeedItemType.video ||
+                item.type == FeedItemType.carousel)
+              _bottomPlayIcon(),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildItemContent() {
     if (item.type == FeedItemType.empty) {
-      return Center(
-        child: Text(
-          'No Media',
-          style: TextStyle(
-            color: AppColors.iconGrey.withOpacity(0.5),
-            fontSize: 12,
+      return Container(
+        color: AppColors.fieldBgColor,
+        child: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(
+                Icons.image_not_supported_outlined,
+                color: AppColors.iconGrey.withOpacity(0.4),
+                size: 22,
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'No Media',
+                style: TextStyle(
+                  color: AppColors.iconGrey.withOpacity(0.4),
+                  fontSize: 10,
+                ),
+              ),
+            ],
           ),
         ),
       );
     }
 
     if (item.isBlue) {
-      return Center(
-        child: CustomPaint(size: Size(50, 50), painter: ThreeLinesPainter()),
+      return Container(
+        color: AppColors.primaryColor.withOpacity(0.15),
+        child: Center(
+          child: CustomPaint(
+            size: const Size(40, 40),
+            painter: ThreeLinesPainter(),
+          ),
+        ),
       );
     }
 
@@ -62,25 +105,51 @@ class FeedGridItem extends StatelessWidget {
       fit: BoxFit.cover,
       width: double.infinity,
       height: double.infinity,
+      loadingBuilder: (context, child, loadingProgress) {
+        if (loadingProgress == null) return child;
+        return Container(
+          color: AppColors.fieldBgColor,
+          child: const Center(
+            child: SizedBox(
+              width: 18,
+              height: 18,
+              child: CircularProgressIndicator(
+                strokeWidth: 1.5,
+                color: AppColors.primaryColor,
+              ),
+            ),
+          ),
+        );
+      },
+      errorBuilder: (_, __, ___) => Container(
+        color: AppColors.fieldBgColor,
+        child: const Icon(
+          Icons.broken_image_outlined,
+          color: AppColors.iconGrey,
+          size: 24,
+        ),
+      ),
     );
   }
 
   Widget _topLeftIcon() {
     return Positioned(
-      top: 8,
-      left: 8,
+      top: 6,
+      left: 6,
       child: Container(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
           color: item.isSelected
-              ? AppColors.successGreen.withOpacity(0.9)
-              : AppColors.buttonBgColor.withOpacity(0.9),
+              ? AppColors.primaryColor.withOpacity(0.9)
+              : Colors.black54,
           borderRadius: BorderRadius.circular(4),
         ),
         child: Icon(
-          item.isSelected ? Icons.check_circle : Icons.copy,
+          item.isSelected
+              ? Icons.check_circle_rounded
+              : Icons.collections_outlined,
           color: Colors.white,
-          size: 16,
+          size: 14,
         ),
       ),
     );
@@ -88,30 +157,41 @@ class FeedGridItem extends StatelessWidget {
 
   Widget _topRightBlock() {
     return Positioned(
-      top: 8,
-      right: 8,
+      top: 6,
+      right: 6,
       child: Container(
-        padding: const EdgeInsets.all(4),
+        padding: const EdgeInsets.all(3),
         decoration: BoxDecoration(
-          color: AppColors.errorRed.withOpacity(0.9),
+          color: AppColors.errorRed.withOpacity(0.85),
           borderRadius: BorderRadius.circular(4),
         ),
-        child: const Icon(Icons.block, color: Colors.white, size: 16),
+        child: const Icon(Icons.block_rounded, color: Colors.white, size: 14),
       ),
     );
   }
 
   Widget _bottomPlayIcon() {
     return Positioned(
-      bottom: 8,
-      left: 8,
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(
-          color: Colors.black.withOpacity(0.6),
-          borderRadius: BorderRadius.circular(4),
-        ),
-        child: const Icon(Icons.play_arrow, color: Colors.white, size: 20),
+      bottom: 6,
+      left: 6,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: Colors.black54,
+              borderRadius: BorderRadius.circular(4),
+            ),
+            child: Icon(
+              item.type == FeedItemType.carousel
+                  ? Icons.collections_rounded
+                  : Icons.play_arrow_rounded,
+              color: Colors.white,
+              size: 14,
+            ),
+          ),
+        ],
       ),
     );
   }
