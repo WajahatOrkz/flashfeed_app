@@ -34,6 +34,14 @@ class EditProfileController extends GetxController {
     _fetchInitialData();
   }
 
+  @override
+  void onClose() {
+    nameController.dispose();
+    emailController.dispose();
+    aboutController.dispose();
+    super.onClose();
+  }
+
   Future<void> _fetchInitialData() async {
     isLoading.value = true;
     final userId = SharedPreferencesService.instance.userId ?? '';
@@ -71,12 +79,33 @@ class EditProfileController extends GetxController {
     print('Fetched image URL: $imageUrl');
   }
 
+  static const _defaultPassions = [
+    'Music',
+    'Sports',
+    'Travel',
+    'Food',
+    'Fitness',
+    'Gaming',
+    'Photography',
+    'Art',
+    'Technology',
+    'Fashion',
+    'Movies',
+    'Books',
+    'Dance',
+    'Comedy',
+    'Nature',
+  ];
+
   Future<void> _getAllPassions() async {
     final passionsData = await profileRepo.getAllPassions();
-    if (passionsData != null) {
+    if (passionsData != null && passionsData.isNotEmpty) {
       allPassionsList.value = passionsData;
       availablePassions.clear();
       availablePassions.addAll(allPassionsList.map((p) => p.name).toList());
+    } else {
+      availablePassions.clear();
+      availablePassions.addAll(_defaultPassions);
     }
   }
 
@@ -156,6 +185,13 @@ class EditProfileController extends GetxController {
         nameController.text,
       );
 
+      // Clear all fields after successful update
+      nameController.clear();
+      emailController.clear();
+      aboutController.clear();
+      passions.clear();
+      pickedImage.value = null;
+
       // Refresh profile view with updated data
       if (Get.isRegistered<UserProfileController>()) {
         await Get.find<UserProfileController>().refreshProfile();
@@ -173,13 +209,5 @@ class EditProfileController extends GetxController {
         snackPosition: SnackPosition.BOTTOM,
       );
     }
-  }
-
-  @override
-  void onClose() {
-    nameController.dispose();
-    emailController.dispose();
-    aboutController.dispose();
-    super.onClose();
   }
 }

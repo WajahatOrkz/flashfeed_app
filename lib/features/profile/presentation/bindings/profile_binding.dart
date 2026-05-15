@@ -6,6 +6,6 @@ class UserProfileBinding extends Bindings {
   @override
   void dependencies() {
     Get.lazyPut<UserProfileController>(() => UserProfileController());
-    Get.lazyPut<EditProfileController>(() => EditProfileController());
+    Get.lazyPut<EditProfileController>(() => EditProfileController(), fenix: true);
   }
 }
