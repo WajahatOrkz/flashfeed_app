@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:http_parser/http_parser.dart';
 import '../../../../../core/api/api_client.dart';
 import '../../../../../core/api/endpoints.dart';
-import '../../../../../model/response_model.dart';
 import '../models/passion_model.dart';
 import '../models/user_profile_model.dart';
 
