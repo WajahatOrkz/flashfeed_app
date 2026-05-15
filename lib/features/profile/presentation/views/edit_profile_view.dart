@@ -8,13 +8,11 @@ import '../widgets/edit_profile_text_field.dart';
 import '../widgets/edit_profile_update_button.dart';
 import '../widgets/image_picker_sheet.dart';
 
-class EditProfileView extends StatelessWidget {
+class EditProfileView extends GetView<EditProfileController> {
   const EditProfileView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(EditProfileController());
-
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();

@@ -56,17 +56,19 @@ class EditProfileController extends GetxController {
 
   Future<void> _getUserProfile(String userId) async {
     final userProfile = await profileRepo.getUserProfile(userId);
-    if (userProfile != null) {
-      nameController.text = userProfile.name;
-      emailController.text = userProfile.email;
+    final user = userProfile.data?.users.firstOrNull;
+    if (user != null) {
+      nameController.text = user.name ?? '';
+      emailController.text = user.email ?? '';
+      aboutController.text = user.about ?? '';
     }
   }
 
   Future<void> _getUserImage(String userId) async {
     final imageUrl = await profileRepo.getUserImage(userId);
-    if (imageUrl != null) {
-      currentImageUrl.value = imageUrl;
-    }
+
+    currentImageUrl.value = imageUrl;
+    print('Fetched image URL: $imageUrl');
   }
 
   Future<void> _getAllPassions() async {

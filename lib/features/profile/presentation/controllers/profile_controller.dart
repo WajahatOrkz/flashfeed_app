@@ -6,8 +6,8 @@ import 'package:flashfeed_app/features/profile/data/repositories/profile_repo.da
 import 'package:get/get.dart';
 
 class UserProfileController extends GetxController {
-  var followerCount = 32.obs;
-  var followingCount = 27.obs;
+  var followerCount = 0.obs;
+  var followingCount = 0.obs;
   var mediaItems = <ProfileMediaItem>[].obs;
   var isLoading = false.obs;
   var username = ''.obs;
@@ -28,10 +28,14 @@ class UserProfileController extends GetxController {
     final userId = SharedPreferencesService.instance.userId ?? '';
 
     if (userId.isNotEmpty) {
-      // Fetch name from API
+      // Fetch name, followers, following from API
       final userProfile = await _profileRepo.getUserProfile(userId);
-      if (userProfile != null && userProfile.name.isNotEmpty) {
-        username.value = userProfile.name;
+      final user = userProfile.data?.users.firstOrNull;
+      if (user != null) {
+        final name = user.name ?? '';
+        if (name.isNotEmpty) username.value = name;
+        followerCount.value = user.followers.length;
+        followingCount.value = user.following.length;
       }
 
       // Fetch fresh signed image URL from API

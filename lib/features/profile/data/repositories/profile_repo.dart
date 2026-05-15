@@ -9,33 +9,32 @@ class ProfileRepo {
   final ApiClient apiClient;
   ProfileRepo({required this.apiClient});
 
-  Future<UserProfileModel?> getUserProfile(String userId) async {
+  Future<UserProfileModel> getUserProfile(String userId) async {
     try {
       final response = await apiClient.getRequest(
         url: '${EndPoints.getUserProfile}/$userId',
       );
       if (response.statusCode == 200 && response.data != null) {
-        final data = response.data['data'] ?? response.data;
-        return UserProfileModel.fromJson(data);
+        return UserProfileModel.fromJson(response.data);
       }
     } catch (e) {
       print("Error fetching profile: $e");
     }
-    return null;
+    return UserProfileModel();
   }
 
-  Future<String?> getUserImage(String userId) async {
+  Future<String> getUserImage(String userId) async {
     try {
       final response = await apiClient.getRequest(
         url: '${EndPoints.getUserImage}/$userId',
       );
       if (response.statusCode == 200 && response.data != null) {
-        return response.data['data'] as String?;
+        return response.data['data'] as String? ?? '';
       }
     } catch (e) {
       print("Error fetching user image: $e");
     }
-    return null;
+    return '';
   }
 
   Future<List<PassionModel>?> getAllPassions() async {

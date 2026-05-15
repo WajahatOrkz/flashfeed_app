@@ -11,6 +11,7 @@ import '../../features/onboarding/presentation/binding/onboarding_binding.dart';
 import '../../features/onboarding/presentation/views/onboarding_view.dart';
 import '../../features/splash/presentation/bindings/splash_binding.dart';
 import '../../features/splash/presentation/views/splash_view.dart';
+import '../../features/profile/presentation/bindings/profile_binding.dart';
 import '../../features/profile/presentation/views/edit_profile_view.dart';
 import 'routes.dart';
 
@@ -63,6 +64,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.editProfileRoute,
       page: () => const EditProfileView(),
+      binding: UserProfileBinding(),
       transition: Transition.noTransition,
     ),
   ];
