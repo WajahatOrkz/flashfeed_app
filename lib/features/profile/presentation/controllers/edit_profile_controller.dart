@@ -53,8 +53,9 @@ class EditProfileController extends GetxController {
 
     // Call APIs in parallel
     await Future.wait([
-      _getUserProfile(userId),
       _getUserImage(userId),
+      _getUserProfile(userId),
+
       _getAllPassions(),
       _getUserPassions(userId),
     ]);

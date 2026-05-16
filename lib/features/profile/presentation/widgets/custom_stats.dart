@@ -15,7 +15,7 @@ class StatItem extends StatelessWidget {
           count,
           style: const TextStyle(
             color: AppColors.textColor,
-            fontSize: 20,
+            fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),

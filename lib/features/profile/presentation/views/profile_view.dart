@@ -1,4 +1,5 @@
 import 'package:flashfeed_app/core/theme/app_colors.dart';
+import 'package:flashfeed_app/features/profile/presentation/widgets/custom_about_section.dart';
 import 'package:flashfeed_app/features/profile/presentation/widgets/custom_appbar.dart';
 import 'package:flashfeed_app/features/profile/presentation/widgets/custom_profile_header.dart';
 import 'package:flashfeed_app/features/profile/presentation/widgets/custom_profile_media_grid.dart';
@@ -30,8 +31,6 @@ class ProfileView extends GetView<UserProfileController> {
                 physics: const BouncingScrollPhysics(),
                 child: Column(
                   children: [
-                    const SizedBox(height: 20),
-
                     // Profile Header (Avatar & Name)
                     Obx(
                       () => ProfileHeader(
@@ -39,7 +38,9 @@ class ProfileView extends GetView<UserProfileController> {
                         name: controller.username.value,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 0),
+
+                    Obx(() => AboutSection(aboutText: controller.about.value)),
 
                     // Stats (Followers, Following, etc.)
                     Obx(
@@ -48,7 +49,7 @@ class ProfileView extends GetView<UserProfileController> {
                         following: controller.followingCount.value,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 18),
 
                     // Edit Profile Button
                     Padding(
@@ -57,7 +58,7 @@ class ProfileView extends GetView<UserProfileController> {
                         onPressed: controller.editProfile,
                       ),
                     ),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 18),
 
                     // Subtle Divider to separate profile info from media content
                     Divider(color: Colors.grey.withOpacity(0.2), thickness: 1),

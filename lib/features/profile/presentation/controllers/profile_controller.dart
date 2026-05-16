@@ -12,6 +12,7 @@ class UserProfileController extends GetxController {
   var isLoading = false.obs;
   var username = ''.obs;
   var profileImageUrl = ''.obs;
+  var about = ''.obs;
 
   late final ProfileRepo _profileRepo;
 
@@ -36,6 +37,7 @@ class UserProfileController extends GetxController {
         if (name.isNotEmpty) username.value = name;
         followerCount.value = user.followers.length;
         followingCount.value = user.following.length;
+        about.value = user.about ?? '';
       }
 
       // Fetch fresh signed image URL from API
@@ -72,6 +74,7 @@ class UserProfileController extends GetxController {
   void resetProfile() {
     username.value = '';
     profileImageUrl.value = '';
+    about.value = '';
     mediaItems.value = [];
   }
 
