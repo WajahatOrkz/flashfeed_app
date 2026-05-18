@@ -38,13 +38,13 @@ class ProfileView extends GetView<UserProfileController> {
                         name: controller.username.value,
                       ),
                     ),
-                    const SizedBox(height: 0),
 
                     Obx(() => AboutSection(aboutText: controller.about.value)),
 
                     // Stats (Followers, Following, etc.)
                     Obx(
                       () => ProfileStatsRow(
+                        posts: controller.mediaItems.length,
                         followers: controller.followerCount.value,
                         following: controller.followingCount.value,
                       ),
@@ -58,11 +58,7 @@ class ProfileView extends GetView<UserProfileController> {
                         onPressed: controller.editProfile,
                       ),
                     ),
-                    const SizedBox(height: 18),
-
-                    // Subtle Divider to separate profile info from media content
-                    Divider(color: Colors.grey.withOpacity(0.2), thickness: 1),
-                    const SizedBox(height: 10),
+                    const SizedBox(height: 24),
 
                     // Media Grid
                     ProfileMediaGrid(items: controller.mediaItems),

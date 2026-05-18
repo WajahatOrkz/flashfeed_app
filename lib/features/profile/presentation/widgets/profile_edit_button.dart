@@ -8,28 +8,27 @@ class EditProfileButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       width: double.infinity,
-      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 10),
-      child: ElevatedButton(
+      child: OutlinedButton.icon(
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.primaryColor,
-          foregroundColor: Colors.black, // Dark text on primary button
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          elevation: 5,
-          shadowColor: AppColors.primaryColor.withValues(alpha: 0.4),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        child: const Text(
+        icon: const Icon(Icons.edit_outlined, size: 17),
+        label: const Text(
           'Edit Profile',
           style: TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 0.5,
+            fontSize: 15,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.4,
           ),
+        ),
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primaryColor,
+          side: const BorderSide(color: AppColors.primaryColor, width: 1.5),
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(14),
+          ),
+          backgroundColor: AppColors.primaryColor.withOpacity(0.07),
         ),
       ),
     );

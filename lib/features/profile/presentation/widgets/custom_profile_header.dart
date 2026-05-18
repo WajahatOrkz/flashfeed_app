@@ -9,63 +9,128 @@ class ProfileHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-      decoration: BoxDecoration(
-        color: AppColors.bgColor, // Blend with background
-      ),
-      child: Column(
-        children: [
-          Container(
-            width: 110,
-            height: 110,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.primaryColor.withValues(alpha: 0.3),
-                  blurRadius: 15,
-                  spreadRadius: 2,
+    return Column(
+      children: [
+        // Cover banner with avatar overlapping
+        Stack(
+          clipBehavior: Clip.none,
+          alignment: Alignment.bottomCenter,
+          children: [
+            // Gradient cover banner
+            Container(
+              height: 110,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    Color(0xFF0D2B2F),
+                    Color(0xFF1A2A3A),
+                    Color(0xFF121212),
+                  ],
                 ),
-              ],
-              border: Border.all(color: AppColors.primaryColor, width: 2.5),
+              ),
+              child: Opacity(
+                opacity: 0.25,
+                child: CustomPaint(painter: _BannerPatternPainter()),
+              ),
             ),
-            child: ClipOval(
-              child: Image.network(
-                imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: AppColors.fieldBgColor,
-                  child: const Icon(
-                    Icons.person,
-                    color: AppColors.iconGrey,
-                    size: 50,
+            // Gradient ring avatar
+            Positioned(
+              bottom: -52,
+              child: Container(
+                width: 108,
+                height: 108,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  gradient: const LinearGradient(
+                    colors: [
+                      AppColors.primaryColor,
+                      AppColors.secondaryColor,
+                      Color(0xFF56CCF2),
+                    ],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.primaryColor.withOpacity(0.4),
+                      blurRadius: 20,
+                      spreadRadius: 2,
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.all(3),
+                child: ClipOval(
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: AppColors.fieldBgColor,
+                      child: const Icon(
+                        Icons.person,
+                        color: AppColors.iconGrey,
+                        size: 46,
+                      ),
+                    ),
                   ),
                 ),
               ),
             ),
+          ],
+        ),
+        const SizedBox(height: 64),
+        // Name
+        Text(
+          name,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 22,
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.4,
           ),
-          const SizedBox(height: 16),
-          Text(
-            name,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 0.5,
-            ),
+        ),
+        const SizedBox(height: 4),
+        // @username tag
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+          decoration: BoxDecoration(
+            color: AppColors.primaryColor.withOpacity(0.12),
+            borderRadius: BorderRadius.circular(20),
           ),
-          const SizedBox(height: 4),
-          Text(
+          child: Text(
             '@${name.toLowerCase().replaceAll(' ', '_')}',
-            style: const TextStyle(
-              color: Colors.grey,
-              fontSize: 14,
+            style: TextStyle(
+              color: AppColors.primaryColor.withOpacity(0.9),
+              fontSize: 13,
               fontWeight: FontWeight.w500,
+              letterSpacing: 0.3,
             ),
           ),
-        ],
-      ),
+        ),
+        const SizedBox(height: 16),
+      ],
     );
   }
+}
+
+class _BannerPatternPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = AppColors.primaryColor
+      ..strokeWidth = 1
+      ..style = PaintingStyle.stroke;
+    for (double i = -size.height; i < size.width + size.height; i += 28) {
+      canvas.drawLine(
+        Offset(i, 0),
+        Offset(i + size.height, size.height),
+        paint,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_BannerPatternPainter oldDelegate) => false;
 }
