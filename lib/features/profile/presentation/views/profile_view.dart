@@ -40,7 +40,7 @@ class ProfileView extends GetView<UserProfileController> {
                     ),
 
                     Obx(() => AboutSection(aboutText: controller.about.value)),
-
+                    const SizedBox(height: 10),
                     // Stats (Followers, Following, etc.)
                     Obx(
                       () => ProfileStatsRow(

@@ -20,20 +20,16 @@ class ProfileHeader extends StatelessWidget {
             Container(
               height: 110,
               width: double.infinity,
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 gradient: LinearGradient(
                   begin: Alignment.topLeft,
                   end: Alignment.bottomRight,
                   colors: [
-                    Color(0xFF0D2B2F),
-                    Color(0xFF1A2A3A),
-                    Color(0xFF121212),
+                    AppColors.lightningBlue.withValues(alpha: 0.2),
+                    AppColors.buttonBgColor.withValues(alpha: 0.3),
+                    AppColors.iconDark.withValues(alpha: 0.3),
                   ],
                 ),
-              ),
-              child: Opacity(
-                opacity: 0.25,
-                child: CustomPaint(painter: _BannerPatternPainter()),
               ),
             ),
             // Gradient ring avatar
@@ -113,24 +109,4 @@ class ProfileHeader extends StatelessWidget {
       ],
     );
   }
-}
-
-class _BannerPatternPainter extends CustomPainter {
-  @override
-  void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = AppColors.primaryColor
-      ..strokeWidth = 1
-      ..style = PaintingStyle.stroke;
-    for (double i = -size.height; i < size.width + size.height; i += 28) {
-      canvas.drawLine(
-        Offset(i, 0),
-        Offset(i + size.height, size.height),
-        paint,
-      );
-    }
-  }
-
-  @override
-  bool shouldRepaint(_BannerPatternPainter oldDelegate) => false;
 }
