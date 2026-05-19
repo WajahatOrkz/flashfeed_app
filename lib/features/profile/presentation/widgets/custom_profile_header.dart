@@ -11,72 +11,47 @@ class ProfileHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Cover banner with avatar overlapping
-        Stack(
-          clipBehavior: Clip.none,
-          alignment: Alignment.bottomCenter,
-          children: [
-            // Gradient cover banner
-            Container(
-              height: 110,
-              width: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    AppColors.lightningBlue.withValues(alpha: 0.2),
-                    AppColors.buttonBgColor.withValues(alpha: 0.3),
-                    AppColors.iconDark.withValues(alpha: 0.3),
-                  ],
+        const SizedBox(height: 16),
+        // Gradient ring avatar
+        Container(
+          width: 108,
+          height: 108,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: const LinearGradient(
+              colors: [
+                AppColors.primaryColor,
+                AppColors.secondaryColor,
+                Color(0xFF56CCF2),
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primaryColor.withOpacity(0.4),
+                blurRadius: 20,
+                spreadRadius: 2,
+              ),
+            ],
+          ),
+          padding: const EdgeInsets.all(3),
+          child: ClipOval(
+            child: Image.network(
+              imageUrl,
+              fit: BoxFit.cover,
+              errorBuilder: (_, __, ___) => Container(
+                color: AppColors.fieldBgColor,
+                child: const Icon(
+                  Icons.person,
+                  color: AppColors.iconGrey,
+                  size: 46,
                 ),
               ),
             ),
-            // Gradient ring avatar
-            Positioned(
-              bottom: -52,
-              child: Container(
-                width: 108,
-                height: 108,
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  gradient: const LinearGradient(
-                    colors: [
-                      AppColors.primaryColor,
-                      AppColors.secondaryColor,
-                      Color(0xFF56CCF2),
-                    ],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: AppColors.primaryColor.withOpacity(0.4),
-                      blurRadius: 20,
-                      spreadRadius: 2,
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.all(3),
-                child: ClipOval(
-                  child: Image.network(
-                    imageUrl,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) => Container(
-                      color: AppColors.fieldBgColor,
-                      child: const Icon(
-                        Icons.person,
-                        color: AppColors.iconGrey,
-                        size: 46,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ],
+          ),
         ),
-        const SizedBox(height: 64),
+        const SizedBox(height: 12),
         // Name
         Text(
           name,
